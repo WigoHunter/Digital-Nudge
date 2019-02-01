@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Login from "./Login";
 
 // Styles
 import "../less/App.less";
@@ -11,7 +12,7 @@ class App extends Component {
 	render() {
 		return (
 			<div className="app">
-				<h1>Hello World</h1>
+				<Login />
 			</div>
 		);
 	}
