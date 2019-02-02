@@ -35,6 +35,7 @@ module.exports = {
         "no-mixed-spaces-and-tabs": [
             2,
             "smart-tabs"
-        ]
+        ],
+        "no-console": 0,
     }
 };

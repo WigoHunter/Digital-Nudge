@@ -23,3 +23,5 @@ static-html
 accounts-google
 accounts-base
 service-configuration
+http
+percolate:google-api

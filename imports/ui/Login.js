@@ -17,7 +17,7 @@ class Login extends React.Component {
 		Meteor.loginWithGoogle({ requestPermissions: ["email", "profile", "https://www.googleapis.com/auth/calendar.readonly"] }, err => {
 			if (err) {
 				alert("Login failed... check console logs");
-				console.log({ err }); // eslint-disable-line
+				console.log({ err });
 				return;
 			}
 
@@ -26,8 +26,14 @@ class Login extends React.Component {
 	}
 
 	getCalendar = () => {
-		// const token = this.props.user.services.google.accessToken || null;
-		// Meteor.call("getCalendar", this.props.user.services.google.accessToken);
+		Meteor.call("getCalendar", (err, data) => {
+			if (err) {
+				alert("Oops. Something's wrong");
+				return;
+			}
+
+			console.log(data);
+		});
 	}
 
 	render() {
