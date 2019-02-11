@@ -3,5 +3,42 @@
 @yellow: #f9e75e;
 
 .app {
-    
+	width: 100vw;
+	min-height: 100vh;
+	background: @primary;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	& .login {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		& h3 {
+			color: #f2f2f2;
+			font-size: 24px;
+			margin-bottom: 30px;
+		}
+
+		& button {
+			background: @yellow;
+			border: none;
+			height: 60px;
+			width: 240px;
+			font-size: 18px;
+			box-shadow: 0 0 8px 0 rgba(0, 0, 0, .3);
+			color: @primary;
+			border-radius: 100px;
+			outline: 0;
+			cursor: pointer;
+			transition: all 0.3s ease;
+
+			&:hover {
+				transform: scale(1.1);
+				opacity: 0.95;
+			}
+		}
+	}
 }

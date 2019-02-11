@@ -37,13 +37,18 @@ class Login extends React.Component {
 	}
 
 	render() {
+		const { user } = this.props;
+
 		return (
-			<div>
-				{this.props.user._id
+			<div className="login">
+				{user._id
 					?
-					<button onClick={() => this.getCalendar()}>
-						Get Calendar Info
-					</button> 
+					<>
+						<h3>Welcome to Digital Nudge, {(user.services && user.services.google) && user.services.google.name}!</h3>
+						<button onClick={() => this.getCalendar()}>
+							Get Calendar Info
+						</button>
+					</>
 					:
 					<button onClick={() => this.login()}>
 						Login
