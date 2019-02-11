@@ -1,10 +1,10 @@
 import { Meteor } from "meteor/meteor";
 import "../imports/api/auth";
 import "../imports/api/calendar";
-import "../imports/api/email"
+import "../imports/api/email";
+import keys from "../keys";
 
 Meteor.startup(() => {
-
-    process.env.MAIL_URL="smtps://apikey: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@smtp.sendgrid.net:465/";
-
-})
+	// eslint-disable-next-line no-undef
+	process.env.MAIL_URL = keys.sendGrid.server;
+});

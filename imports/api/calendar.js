@@ -1,9 +1,26 @@
 import { Meteor } from "meteor/meteor";
+import { Email } from "meteor/email";
 
-// Params: calendars = list of calendar ids of each calendar the user has.
+const sendEmail = (events) => {
+	console.log("sending email...");
+
+	// Check if the user has gmail first. In case google.email runs into error.
+	if (Meteor.user().services.google) {
+		Email.send({
+			to: Meteor.user().services.google.email,
+			from: "kevin@example.com",
+			subject: "Hello From Digital Nudge",
+			text: events.length > 0 ? "Fantastic job! You made plans today." : "You are slacking off. No plans made today."
+		});
+	}
+};
+
 const hasEventToday = events => {
-	// TODO: Should check the calendars if there are events today.
-	return events.items.map(e => e.summary) || [];
+	events = events.items.map(e => e.summary) || [];
+	sendEmail(events);
+
+	// return the events to frontend.
+	return events;
 };
 
 Meteor.methods({
