@@ -15,6 +15,16 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(appReducer, composeEnhancers(applyMiddleware(thunk)));
 
 Meteor.startup(() => {
+
+	// Client: Asynchronously send an email.
+	Meteor.call(
+	'sendEmail',
+	'Bowen <bwzhangtopone@gmail.com>',
+	'bob@example.com',
+	'Hello from Meteor!',
+	'This is a test of Email.send.'
+	);
+
 	store.dispatch(loadUser());
 
 	render(

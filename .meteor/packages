@@ -25,3 +25,4 @@ accounts-base
 service-configuration
 http
 percolate:google-api
+email
