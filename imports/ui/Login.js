@@ -14,7 +14,12 @@ class Login extends React.Component {
 	}
 
 	login = () => {
-		Meteor.loginWithGoogle({ requestPermissions: ["email", "profile", "https://www.googleapis.com/auth/calendar.readonly"] }, err => {
+		Meteor.loginWithGoogle({
+			requestPermissions: ["email", "profile", "https://www.googleapis.com/auth/calendar.readonly"],
+			requestOfflineToken: true,
+			forceApprovalPrompt: true
+		},
+		err => {
 			if (err) {
 				alert("Login failed... check console logs");
 				console.log({ err });
@@ -28,6 +33,7 @@ class Login extends React.Component {
 	getCalendar = () => {
 		Meteor.call("getCalendar", (err, data) => {
 			if (err) {
+				console.log(err);
 				alert("Oops. Something's wrong");
 				return;
 			}

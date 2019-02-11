@@ -11,12 +11,12 @@ Meteor.methods({
 	"getCalendar"() {
 		// get calendar on the server side
 		return new Promise((resolve, reject) => {
-			GoogleApi.get("/calendar/v3/users/me/calendarList", (err, res) => {
+			GoogleApi.get("/calendar/v3/users/me/calendarList", { user: Meteor.user() }, (err, res) => {
 				if (err) {
 					reject(err);
 				}
 	
-				const calendars = res.items.map(i => i.id);
+				const calendars = res;
 				resolve(hasEventToday(calendars));
 			});
 		});
