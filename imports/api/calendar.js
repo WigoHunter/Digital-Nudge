@@ -1,10 +1,10 @@
 import { Meteor } from "meteor/meteor";
 import { sendEmail } from "./email";
 
-const eventsToday = events => {
+export const eventsToday = (events, user=Meteor.user()) => {
 	if (events && events.items) {
 		events = events.items.map(e => e.summary);
-		sendEmail(events);
+		sendEmail(events, user);
 	
 		return events;
 	}
@@ -12,7 +12,6 @@ const eventsToday = events => {
 	return [];
 };
 
-/* eslint-disable */
 export const checkCalendar = () => new Promise((resolve, reject) => {
 	GoogleApi.get("/calendar/v3/calendars/primary/events", {
 		params: {
@@ -27,7 +26,6 @@ export const checkCalendar = () => new Promise((resolve, reject) => {
 		resolve(eventsToday(res));
 	});
 });
-/* eslint-enable */
 
 Meteor.methods({
 	"getCalendar"() {

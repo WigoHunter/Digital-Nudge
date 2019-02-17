@@ -37,5 +37,6 @@ module.exports = {
             "smart-tabs"
         ],
         "no-console": 0,
+        "no-undef": 0,
     }
 };

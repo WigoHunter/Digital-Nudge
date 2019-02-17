@@ -50,7 +50,7 @@ class Login extends React.Component {
 				{user._id
 					?
 					<>
-						<h3>Welcome to Digital Nudge, {(user.services && user.services.google) && user.services.google.name}!</h3>
+						<h3>Welcome to Digital Nudge, <span onClick={() => Meteor.logout()}>{(user.services && user.services.google) && user.services.google.name}</span>!</h3>
 						<button onClick={() => this.getCalendar()}>
 							Get Calendar Info
 						</button>
