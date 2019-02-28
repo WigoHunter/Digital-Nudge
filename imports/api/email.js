@@ -9,7 +9,7 @@ export const sendEmail = (events, user=Meteor.user()) => {
 		try {
 			Email.send({
 				to: user.services.google.email,
-				from: "kevin@example.com",
+				from: "kevin@nudges.ml",
 				subject: "Hello From Digital Nudge",
 				text: events.length > 0 ? "Fantastic job! You made plans today." : "You are slacking off. No plans made today."
 			});

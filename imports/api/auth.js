@@ -2,8 +2,6 @@ import { ServiceConfiguration } from "meteor/service-configuration";
 import { Accounts } from "meteor/accounts-base";
 import keys from "../../keys";
 
-
-
 ServiceConfiguration.configurations.upsert(
 	{ service: "google" },
 	{
