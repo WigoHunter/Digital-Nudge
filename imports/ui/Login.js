@@ -34,7 +34,9 @@ class Login extends React.Component {
 				}
 
 				console.log(data);
-				this.props.authActions.doneLoadingData();
+				setTimeout(() => {
+					this.props.authActions.doneLoadingData();
+				}, 1500);
 			});
 		});
 	}
