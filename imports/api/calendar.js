@@ -27,8 +27,27 @@ export const checkCalendar = () => new Promise((resolve, reject) => {
 	});
 });
 
+export const loadUserPastData = () => new Promise((resolve, reject) => {
+	GoogleApi.get("/calendar/v3/calendars/primary/events", {
+		params: {
+			timeMax: new Date().toISOString(),
+			timeMin: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+		}
+	}, (err, res) => {
+		if (err) {
+			reject(err);
+		}
+
+		resolve(res);
+	});
+});
+
 Meteor.methods({
 	"getCalendar"() {
 		return checkCalendar();
 	},
+
+	"loadData"() {
+		return loadUserPastData();
+	}
 });

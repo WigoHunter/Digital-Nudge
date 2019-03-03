@@ -14,5 +14,7 @@ ServiceConfiguration.configurations.upsert(
 );
 
 Accounts.onCreateUser((_, user) => {
+	// can use user.nudge as an object to control nudging behavior (i.e. nudge on what days? At what time?)
+	user.nudge = true;
 	return user;
 });

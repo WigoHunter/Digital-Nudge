@@ -1,24 +1,38 @@
 import React, { Component } from "react";
 import Login from "./Login";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import Dashboard from "./Dashboard";
 
 // Styles
 import "../less/App.less";
 
-// Redux should be here
-// If logged in, then render <UserInteraction />, otherwise <Login />
-
 class App extends Component {
-	constructor(props) {
-		super(props);
+	static propTypes = {
+		user: PropTypes.object
 	}
 	
 	render() {
+		const { user } = this.props;
+
 		return (
 			<div className="app">
-				<Login />
+				{
+					user._id
+						?
+						<Dashboard user={user} />
+						:
+						<Login />
+				}
 			</div>
 		);
 	}
 }
 
-export default App;
+const mapStateToProps = state => {
+	return {
+		user: state.auth.user,
+	};
+};
+
+export default connect(mapStateToProps)(App);

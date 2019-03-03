@@ -1,5 +1,6 @@
 const initialState = {
-	user: {}
+	user: {},
+	loading: false
 };
 
 function auth(state = initialState, action) {
@@ -11,6 +12,18 @@ function auth(state = initialState, action) {
 		return {
 			...state,
 			user: data.user || {},
+		};
+
+	case "LOADING_DATA":
+		return {
+			...state,
+			loading: true
+		};
+
+	case "DONE_LOADING_DATA":
+		return {
+			...state,
+			loading: false
 		};
 
 	default:
