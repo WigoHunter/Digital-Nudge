@@ -1,28 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { sendEmail } from "./email";
-
-const isEarlier = (prev, cur) => {
-	const prevHour = prev.getHours();
-	const prevMinutes = prev.getMinutes();
-	const curHour = cur.getHours();
-	const curMinutes = cur.getMinutes();
-
-	return (curHour < prevHour || (curHour == prevHour && curMinutes < prevMinutes));
-};
-
-const isLater = (prev, cur) => {
-	const prevHour = prev.getHours();
-	const prevMinutes = prev.getMinutes();
-	const curHour = cur.getHours();
-	const curMinutes = cur.getMinutes();
-
-	return (curHour > prevHour || (curHour == prevHour && curMinutes > prevMinutes));
-};
-
-const isLonger = (prev, cur) => {
-	return (new Date(cur.end.dateTime).getTime() - new Date(cur.start.dateTime).getTime()) >
-		(new Date(prev.end.dateTime).getTime() - new Date(prev.start.dateTime).getTime());
-};
+import { analyze, isEarlier, isLater, isLonger } from "./utils";
+import config from "../../nudge-config.json";
 
 export const eventsToday = (events, user=Meteor.user()) => {
 	if (events && events.items) {
@@ -101,6 +80,8 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve
 				return;
 			}
 		});
+
+		profile = analyze(profile, config);
 
 		Meteor.call("updateProfile", id, profile, (err, res) => {
 			if (err) {

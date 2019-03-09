@@ -2,18 +2,14 @@
 	"incoming": ["primary"],
 	"outgoing": ["email"],
 	"ignore": ["Saturday", "Sunday"],
+	"userUsageTypes": {
+		"heavy": 20,
+		"neutral": 5,
+		"light": 1,
+		"none": 0
+	},
 	"userTypes": {
-		"heavy": {
-			"numberOfEventsInPast30DaysOver": 20
-		},
-		"neutral": {
-			"numberOfEventsInPast30DaysOver": 5
-		},
-		"light": {
-			"numberOfEventsInPast30DaysOver": 1
-		},
-		"none": {
-			"numberOfEventsInPast30DaysOver": 1
-		}
+		"late": 20,
+		"early": 9
 	}
 }
