@@ -50,7 +50,7 @@ export const checkCalendar = () => new Promise((resolve, reject) => {
 	});
 });
 
-export const loadUserPastData = id => new Promise((resolve, reject) => {
+export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve, reject) => {
 	GoogleApi.get("/calendar/v3/calendars/primary/events", {
 		params: {
 			timeMax: new Date().toISOString(),
@@ -61,7 +61,7 @@ export const loadUserPastData = id => new Promise((resolve, reject) => {
 			reject(err);
 		}
 
-		const events = res.items;
+		let events = res.items;
 		let profile = {
 			counts: 0,
 			countsOnDays: [0, 0, 0, 0, 0, 0, 0],	// index 0 represents Sunday
@@ -70,11 +70,15 @@ export const loadUserPastData = id => new Promise((resolve, reject) => {
 			longest: null,
 		};
 
-		events.forEach(e => {
-			if (e.status === "cancelled" || !e.start || !e.start.dateTime || !e.end || !e.end.dateTime) {
-				return;
-			}
+		events = events.filter(e => (e.status !== "cancelled" && e.start && e.start.dateTime && e.end && e.end.dateTime));
+		events = events.map(e => ({
+			created: e.created,
+			end: e.end,
+			start: e.start,
+			summary: e.summary		// can be dropped later.
+		}));
 
+		events.forEach(e => {
 			try {
 				const curStart = new Date(e.start.dateTime);
 				const curEnd = new Date(e.end.dateTime);
@@ -98,11 +102,7 @@ export const loadUserPastData = id => new Promise((resolve, reject) => {
 			}
 		});
 
-		Meteor.users.update({ _id: id }, {
-			$set: {
-				"nudgeProfile": profile
-			}
-		}, (err, res) => {
+		Meteor.call("updateProfile", id, profile, (err, res) => {
 			if (err) {
 				reject(err);
 			}
@@ -119,5 +119,13 @@ Meteor.methods({
 
 	"loadData"() {
 		return loadUserPastData(this.userId);
+	},
+
+	"updateProfile"(id, profile) {
+		Meteor.users.update({ _id: id }, {
+			$set: {
+				"nudgeProfile": profile
+			}
+		});
 	}
 });

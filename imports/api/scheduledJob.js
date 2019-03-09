@@ -2,7 +2,7 @@ import { Meteor } from "meteor/meteor";
 import { eventsToday } from "./calendar";
 import nudge from "../../nudge-config.json";
 
-const schedule = nudge.ignore.length ? `at 12:00 pm except on ${nudge.ignore}` : "at 12:00 pm";
+const schedule = nudge.ignore.length ? `at 12:00 pm except on ${nudge.ignore.join()}` : "at 12:00 pm";
 
 SyncedCron.add({
 	name: "Check users calendar events at 7am.",

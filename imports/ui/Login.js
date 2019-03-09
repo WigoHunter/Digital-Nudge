@@ -7,6 +7,8 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import authActions from "./actions/auth";
 
+import { loadUserPastData } from "../api/calendar";
+
 class Login extends React.Component {
 	static propTypes = {
 		authActions: PropTypes.object,
@@ -26,18 +28,17 @@ class Login extends React.Component {
 			}
 
 			this.props.authActions.loadingData();
-			Meteor.call("loadData", (err, data) => {
-				if (err) {
+
+			loadUserPastData()
+				.then(() => {
+					setTimeout(() => {
+						this.props.authActions.doneLoadingData();
+					}, 1500);
+				})
+				.catch(err => {
 					alert("Oops. Server cannot retrieve data. (See logs)");
 					console.log(err);
-					return;
-				}
-
-				console.log(data);
-				setTimeout(() => {
-					this.props.authActions.doneLoadingData();
-				}, 1500);
-			});
+				});
 		});
 	}
 
