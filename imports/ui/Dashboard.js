@@ -1,6 +1,7 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
+import Report from "./Report";
 
 // Redux
 import { connect } from "react-redux";
@@ -12,6 +13,7 @@ class Dashboard extends React.Component {
 	}
 
 	getCalendar = () => {
+		/*
 		Meteor.call("getCalendar", (err, data) => {
 			if (err) {
 				console.log(err);
@@ -21,6 +23,7 @@ class Dashboard extends React.Component {
 
 			console.log(data);
 		});
+		*/
 	}
 
 	render() {
@@ -34,9 +37,13 @@ class Dashboard extends React.Component {
 						<p>loading...</p>
 						:
 						<>
-							<h3>Welcome to Digital Nudge, <span onClick={() => Meteor.logout()}>{(user.services && user.services.google) && user.services.google.name}</span>!</h3>
-							<button onClick={() => this.getCalendar()}>
+							<h3>Welcome to Digital Nudge, {(user.services && user.services.google) && user.services.google.name}!</h3>
+							<Report profile={user.nudgeProfile} />
+							{/*<button onClick={() => this.getCalendar()}>
 								Get Calendar Info
+							</button>*/}
+							<button className="logout" onClick={() => Meteor.logout()}>
+								Logout
 							</button>
 						</>
 				}

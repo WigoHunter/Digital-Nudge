@@ -3,10 +3,10 @@
 	"outgoing": ["email"],
 	"ignore": ["Saturday", "Sunday"],
 	"userUsageTypes": {
-		"heavy": 20,
-		"neutral": 5,
-		"light": 1,
-		"none": 0
+		"Heavy": 20,
+		"Neutral": 5,
+		"Light": 1,
+		"None": 0
 	},
 	"userTypes": {
 		"late": 20,

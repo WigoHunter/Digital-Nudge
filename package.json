@@ -13,6 +13,7 @@
     "fetch": "^1.1.0",
     "googleapis": "^37.1.0",
     "meteor-node-stubs": "^0.4.1",
+    "moment": "^2.24.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-redux": "^6.0.0",

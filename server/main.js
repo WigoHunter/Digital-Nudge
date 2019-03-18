@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { HTTP } from "meteor/http";
+import "../imports/api/publish";
 import "../imports/api/auth";
 import "../imports/api/calendar";
 import "../imports/api/email";

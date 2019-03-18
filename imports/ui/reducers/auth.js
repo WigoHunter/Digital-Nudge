@@ -12,6 +12,7 @@ function auth(state = initialState, action) {
 		return {
 			...state,
 			user: data.user || {},
+			userLoaded: data.subscription.ready()
 		};
 
 	case "LOADING_DATA":

@@ -31,6 +31,7 @@ export function loadUser() {
 				type: "USER_LOGIN",
 				data: {
 					user: Meteor.user(),
+					subscription: Meteor.subscribe("userData")
 				}
 			});
 		});

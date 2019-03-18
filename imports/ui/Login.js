@@ -33,7 +33,7 @@ class Login extends React.Component {
 				.then(() => {
 					setTimeout(() => {
 						this.props.authActions.doneLoadingData();
-					}, 1500);
+					}, 600);
 				})
 				.catch(err => {
 					alert("Oops. Server cannot retrieve data. (See logs)");
@@ -45,8 +45,9 @@ class Login extends React.Component {
 	render() {
 		return (
 			<div className="login">
+				<h3>Welcome to Digital Nudge as a Service!</h3>
 				<button onClick={() => this.login()}>
-					Login
+					Login to Subscribe
 				</button>
 			</div>
 		);

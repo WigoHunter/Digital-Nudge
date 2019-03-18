@@ -108,5 +108,35 @@ Meteor.methods({
 				"nudgeProfile": profile
 			}
 		});
+
+		const time = new Date(profile.earliest.start.dateTime);
+		const schedule = `at ${time.getHours() + Math.floor(time.getTimezoneOffset() / 60)}:${time.getMinutes()}${config.ignore.length > 0 ? ` except on ${config.ignore.join()}` : ""}`;
+		// const test_schedule = "at 23:37";
+
+		SyncedCron.add({
+			name: `checking user ${id}'s calendar ${schedule}...`,
+			schedule: parser => parser.text(schedule),
+			job: () => {
+				const user = Meteor.users.findOne({ _id: id });
+				console.log(`checking ${user.services.google.name}'s calendar`);
+				
+				const startOfDay = moment().startOf("day").toDate();
+				const endOfDay = moment().endOf("day").toDate();
+
+				GoogleApi.get("/calendar/v3/calendars/primary/events", {
+					user,
+					params: {
+						timeMin: startOfDay.toISOString(),
+						timeMax: endOfDay.toISOString()
+					}
+				}, (err, res) => {
+					if (err || !config.outgoing.includes("email")) {
+						return;
+					}
+	
+					eventsToday(res, user);
+				});
+			}
+		});
 	}
 });

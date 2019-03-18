@@ -44,3 +44,27 @@ export const isLonger = (prev, cur) => {
 	return (new Date(cur.end.dateTime).getTime() - new Date(cur.start.dateTime).getTime()) >
 		(new Date(prev.end.dateTime).getTime() - new Date(prev.start.dateTime).getTime());
 };
+
+export const mostActive = counts => {
+	console.log(counts);
+	const dates = counts || [];
+
+	switch(dates.indexOf(Math.max(...dates))) {
+	case 0:
+		return "Sunday";
+	case 1:
+		return "Monday";
+	case 2:
+		return "Tuesday";
+	case 3:
+		return "Wednesday";
+	case 4:
+		return "Thursday";
+	case 5:
+		return "Friday";
+	case 6:
+		return "Saturday";
+	default:
+		return null;
+	}
+};

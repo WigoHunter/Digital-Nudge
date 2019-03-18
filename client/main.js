@@ -1,5 +1,6 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
+import { Tracker } from "meteor/tracker";
 import { render } from "react-dom";
 
 // Redux import
@@ -15,6 +16,12 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(appReducer, composeEnhancers(applyMiddleware(thunk)));
 
 Meteor.startup(() => {
+	Tracker.autorun(() => {
+		Meteor.subscribe("userData", () => {
+			console.log(Meteor.users.findOne());
+		});
+	});
+
 	store.dispatch(loadUser());
 
 	render(
