@@ -110,7 +110,7 @@ Meteor.methods({
 		});
 
 		const time = new Date(profile.earliest.start.dateTime);
-		const schedule = `at ${time.getHours() + Math.floor(time.getTimezoneOffset() / 60)}:${time.getMinutes()}${config.ignore.length > 0 ? ` except on ${config.ignore.join()}` : ""}`;
+		const schedule = `at ${time.getHours() + Math.floor(time.getTimezoneOffset() / 60)}:${`${time.getMinutes() < 10 ? "0" : ""}${time.getMinutes()}`}${config.ignore.length > 0 ? ` except on ${config.ignore.join()}` : ""}`;
 		// const test_schedule = "at 23:37";
 
 		SyncedCron.add({
