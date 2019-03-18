@@ -1,8 +1,8 @@
-import { Meteor } from "meteor/meteor";
-import { eventsToday } from "./calendar";
-import nudge from "../../nudge-config.json";
+// import { Meteor } from "meteor/meteor";
+// import { eventsToday } from "./calendar";
+// import nudge from "../../nudge-config.json";
 
-export const schedule = nudge.ignore.length ? `at 12:00 pm except on ${nudge.ignore.join()}` : "at 12:00 pm";
+// export const schedule = nudge.ignore.length ? `at 12:00 pm except on ${nudge.ignore.join()}` : "at 12:00 pm";
 
 // SyncedCron.add({
 // 	name: "Check users calendar events at 7am.",
