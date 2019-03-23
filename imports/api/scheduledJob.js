@@ -7,7 +7,7 @@ export const schedule = config.ignore.length ? `at 12:00 pm except on ${config.i
 
 SyncedCron.add({
 	name: "daily scheduling",
-	schedule: parser => parser.text("at 00:00 am"),
+	schedule: parser => parser.text("at 04:00 am"),
 	job: () => {
 		const users = Meteor.users.find().fetch();
 

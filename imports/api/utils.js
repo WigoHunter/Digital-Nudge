@@ -54,7 +54,7 @@ export const getNextTime = earliest => {
 	}
 
 	return nextScheduledTime;
-}
+};
 
 export const mostActive = counts => {
 	console.log(counts);
