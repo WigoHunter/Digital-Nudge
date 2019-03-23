@@ -1,7 +1,7 @@
 {
 	"incoming": ["primary"],
 	"outgoing": ["email"],
-	"ignore": ["Saturday", "Sunday"],
+	"ignore": [6, 0],
 	"userUsageTypes": {
 		"Heavy": 20,
 		"Neutral": 5,

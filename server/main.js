@@ -10,5 +10,6 @@ import keys from "../keys";
 Meteor.startup(() => {
 	process.env.MAIL_URL = keys.sendGrid.server;
 	Meteor.http = HTTP;
+	console.log(moment(new Date().getTime() + new Date().getTimezoneOffset()).startOf("day").toDate());
 	SyncedCron.start();
 });

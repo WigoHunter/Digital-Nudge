@@ -45,6 +45,17 @@ export const isLonger = (prev, cur) => {
 		(new Date(prev.end.dateTime).getTime() - new Date(prev.start.dateTime).getTime());
 };
 
+export const getNextTime = earliest => {
+	let nextScheduledTime = new Date();
+	nextScheduledTime.setHours(earliest.getUTCHours());
+	nextScheduledTime.setMinutes(earliest.getMinutes());
+	if (nextScheduledTime.getTime() < new Date().getTime()) {
+		nextScheduledTime.setDate(nextScheduledTime.getDate() + 1);
+	}
+
+	return nextScheduledTime;
+}
+
 export const mostActive = counts => {
 	console.log(counts);
 	const dates = counts || [];
