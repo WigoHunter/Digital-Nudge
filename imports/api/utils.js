@@ -11,8 +11,8 @@ const findUsageType = (profile, config) => {
 };
 
 const findType = (profile, config) => ({
-	late: new Date(profile.latest.end.dateTime).getHours() >= config.userTypes.late,
-	early: new Date(profile.earliest.start.dateTime).getHours() < config.userTypes.early
+	late: profile.latest == null ? false : new Date(profile.latest.end.dateTime).getHours() >= config.userTypes.late,
+	early: profile.earliest == null ? false : new Date(profile.earliest.start.dateTime).getHours() < config.userTypes.early
 });
 
 export const analyze = (profile, config) => ({
@@ -56,8 +56,23 @@ export const getNextTime = earliest => {
 	return nextScheduledTime;
 };
 
+export const fromLocalToUTC = (hour, offset) => {
+	const h = hour + Math.floor(offset / 60);
+	return {
+		addOne: h >= 24,
+		h: h % 24
+	};
+};
+
+export const fromUTCToLocal = (hour, offset) => {
+	const h = hour - Math.floor(offset / 60);
+	return {
+		minusOne: h < 0,
+		h: h < 0 ? h + 24 : h
+	};
+};
+
 export const mostActive = counts => {
-	console.log(counts);
 	const dates = counts || [];
 
 	switch(dates.indexOf(Math.max(...dates))) {

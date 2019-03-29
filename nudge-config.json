@@ -2,6 +2,10 @@
 	"incoming": ["primary"],
 	"outgoing": ["email"],
 	"ignore": [6, 0],
+	"bounds": {
+		"lower": 6,
+		"upper": 10
+	},
 	"userUsageTypes": {
 		"Heavy": 20,
 		"Neutral": 5,

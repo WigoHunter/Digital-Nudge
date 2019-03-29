@@ -29,6 +29,7 @@ export const checkCalendar = () => new Promise((resolve, reject) => {
 	});
 });
 
+// Browser environment - local time applies to the Date Time.
 export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve, reject) => {
 	GoogleApi.get("/calendar/v3/calendars/primary/events", {
 		params: {

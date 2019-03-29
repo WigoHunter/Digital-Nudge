@@ -7,6 +7,7 @@ const formatMinutes = minutes => `${minutes / 60 > 0 ? `${Math.floor(minutes / 6
 
 const Report = ({ profile }) => {
 	if (!profile || !profile.earliest || !profile.latest || !profile.longest) {
+		// Can put user form here...
 		return null;
 	}
 
