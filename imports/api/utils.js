@@ -45,10 +45,15 @@ export const isLonger = (prev, cur) => {
 		(new Date(prev.end.dateTime).getTime() - new Date(prev.start.dateTime).getTime());
 };
 
-export const getNextTime = earliest => {
+export const getNextTime = (time, justCheckDate=false) => {
+	if (justCheckDate && time.getTime() < new Date().getTime()) {
+		time.setDate(time.getDate() + 1);
+		return time;
+	}
+
 	let nextScheduledTime = new Date();
-	nextScheduledTime.setHours(earliest.getUTCHours());
-	nextScheduledTime.setMinutes(earliest.getMinutes());
+	nextScheduledTime.setHours(time.getUTCHours());
+	nextScheduledTime.setMinutes(time.getMinutes());
 	if (nextScheduledTime.getTime() < new Date().getTime()) {
 		nextScheduledTime.setDate(nextScheduledTime.getDate() + 1);
 	}
@@ -56,22 +61,14 @@ export const getNextTime = earliest => {
 	return nextScheduledTime;
 };
 
-export const fromLocalToUTC = (hour, offset) => {
-	const h = hour + Math.floor(offset / 60);
-	return {
-		addOne: h >= 24,
-		h: h % 24
-	};
+// return moment object
+export const fromLocalToUTC = (time, timezone) => {
+	return moment.tz(time, "HH:mm", timezone).utc();
 };
 
-export const fromUTCToLocal = (hour, offset) => {
-	console.log(hour);
-	console.log(offset);
-	const h = hour - Math.floor(offset / 60);
-	return {
-		minusOne: h < 0,
-		h: h < 0 ? h + 24 : h
-	};
+// return moment object
+export const fromUTCToLocal = (time, timezone) => {
+	return moment(time, "HH:mm").tz(timezone);
 };
 
 export const mostActive = counts => {
@@ -96,3 +93,12 @@ export const mostActive = counts => {
 		return null;
 	}
 };
+
+export const trimEvents = events => events
+	.filter(e => (e.status !== "cancelled" && e.start && e.start.dateTime && e.end && e.end.dateTime))
+	.map(e => ({
+		created: e.created,
+		end: e.end,
+		start: e.start,
+		summary: e.summary
+	}));

@@ -8,6 +8,7 @@ import "../imports/api/scheduledJob";
 import keys from "../keys";
 
 // Test
+// import { scheduleJobs } from "../imports/api/scheduledJob";
 import { t_suggestion } from "../imports/api/tests";
 
 Meteor.startup(() => {
@@ -15,8 +16,11 @@ Meteor.startup(() => {
 	Meteor.http = HTTP;
 	SyncedCron.start();
 
-	// Test
-	// Meteor.users.find().fetch().forEach(user => {
-	// 	t_suggestion(user);
-	// });
+	// Test schedule jobs
+	// scheduleJobs();
+
+	// Test suggestion
+	Meteor.users.find().fetch().forEach(user => {
+		t_suggestion(user);
+	});
 });

@@ -19,5 +19,8 @@
 	"userTypes": {
 		"late": 20,
 		"early": 9
+	},
+	"defaults": {
+		"send": 9 
 	}
 }

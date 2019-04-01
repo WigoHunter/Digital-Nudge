@@ -1,25 +1,16 @@
 import { Meteor } from "meteor/meteor";
 import { sendEmail } from "./email";
-import { analyze, isEarlier, isLater, isLonger, fromUTCToLocal } from "./utils";
+import { analyze, isEarlier, isLater, isLonger, trimEvents } from "./utils";
 import config from "../../nudge-config.json";
 
+// Server environment - UTC time
 export const eventsToday = (events, user=Meteor.user(), send=true) => {
 	if (events && events.items) {
-		events = events.items;
+		events = trimEvents(events.items);
 		let suggestion = [];
 
 		events.forEach(e => {
-			if (!e.start.dateTime || !e.end.dateTime) {
-				return;
-			}
-			
 			console.log(e);
-			const start = new Date(e.start.dateTime);
-			const end = new Date(e.end.dateTime);
-
-			// TODO: realized getTimezoneOffset gets only that of the server location. Not the original date object.
-			console.log(`local start time: ${fromUTCToLocal(start.getUTCHours(), start.getTimezoneOffset()).h}:${start.getMinutes()}`);
-			console.log(`local end   time: ${fromUTCToLocal(end.getUTCHours(), end.getTimezoneOffset()).h}:${end.getMinutes()}`);
 		});
 
 		if (send) {
@@ -31,21 +22,6 @@ export const eventsToday = (events, user=Meteor.user(), send=true) => {
 	
 	return [];
 };
-
-export const checkCalendar = () => new Promise((resolve, reject) => {
-	GoogleApi.get("/calendar/v3/calendars/primary/events", {
-		params: {
-			timeMin: new Date().toISOString(),
-			timeMax: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString()
-		}
-	}, (err, res) => {
-		if (err) {
-			reject(err);
-		}
-
-		resolve(eventsToday(res));
-	});
-});
 
 // Browser environment - local time applies to the Date Time.
 export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve, reject) => {
@@ -69,14 +45,7 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve
 			timezone: TimezonePicker.detectedZone()
 		};
 
-		events = events.filter(e => (e.status !== "cancelled" && e.start && e.start.dateTime && e.end && e.end.dateTime));
-		events = events.map(e => ({
-			created: e.created,
-			end: e.end,
-			start: e.start,
-			summary: e.summary		// can be dropped later.
-		}));
-
+		events = trimEvents(events);
 		events.forEach(e => {
 			try {
 				const curStart = new Date(e.start.dateTime);
@@ -114,14 +83,6 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve
 });
 
 Meteor.methods({
-	"getCalendar"() {
-		return checkCalendar();
-	},
-
-	"loadData"() {
-		return loadUserPastData(this.userId);
-	},
-
 	"updateProfile"(id, profile) {
 		Meteor.users.update({ _id: id }, {
 			$set: {
