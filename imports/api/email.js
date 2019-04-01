@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Email } from "meteor/email";
 
-export const sendEmail = (events, user=Meteor.user()) => {
+export const sendEmail = (suggestion, user=Meteor.user()) => {
 	// Check if the user has gmail first. In case google.email runs into error.
 	if (user && user.services.google) {
 		console.log(`sending email to ${user.services.google.email}...`);

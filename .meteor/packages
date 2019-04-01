@@ -28,3 +28,5 @@ email
 littledata:synced-cron
 react-meteor-data
 momentjs:moment
+joshowens:timezone-picker
+risul:moment-timezone

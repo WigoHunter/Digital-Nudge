@@ -65,6 +65,8 @@ export const fromLocalToUTC = (hour, offset) => {
 };
 
 export const fromUTCToLocal = (hour, offset) => {
+	console.log(hour);
+	console.log(offset);
 	const h = hour - Math.floor(offset / 60);
 	return {
 		minusOne: h < 0,
