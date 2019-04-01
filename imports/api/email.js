@@ -4,7 +4,8 @@ import keys from "../../keys";
 import sgMail from "@sendgrid/mail";
 
 sgMail.setApiKey(keys["sendGrid"]["key"]);
-export const sendEmail = (events, user=Meteor.user()) => {
+
+export const sendEmail = (suggestion, user=Meteor.user()) => {
 	// Check if the user has gmail first. In case google.email runs into error.
 	if (user && user.services.google) {
 		console.log(`sending email to ${user.services.google.email}...`);
@@ -34,4 +35,3 @@ Meteor.methods({
 		Email.send({ to, from, subject, text });
 	}
 });
-  

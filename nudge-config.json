@@ -6,6 +6,10 @@
 		"lower": 6,
 		"upper": 10
 	},
+	"suggestion": {
+		"start": 19,
+		"end": 22
+	},
 	"userUsageTypes": {
 		"Heavy": 20,
 		"Neutral": 5,
@@ -15,5 +19,8 @@
 	"userTypes": {
 		"late": 20,
 		"early": 9
+	},
+	"defaults": {
+		"send": 9 
 	}
 }

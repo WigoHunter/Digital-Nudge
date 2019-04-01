@@ -12,20 +12,6 @@ class Dashboard extends React.Component {
 		loading: PropTypes.bool
 	}
 
-	getCalendar = () => {
-		/*
-		Meteor.call("getCalendar", (err, data) => {
-			if (err) {
-				console.log(err);
-				alert("Oops. Something's wrong");
-				return;
-			}
-
-			console.log(data);
-		});
-		*/
-	}
-
 	render() {
 		const { user, loading } = this.props;
 
@@ -39,9 +25,6 @@ class Dashboard extends React.Component {
 						<>
 							<h3>Welcome to Digital Nudge, {(user.services && user.services.google) && user.services.google.name}!</h3>
 							<Report profile={user.nudgeProfile} />
-							{/*<button onClick={() => this.getCalendar()}>
-								Get Calendar Info
-							</button>*/}
 							<button className="logout" onClick={() => Meteor.logout()}>
 								Logout
 							</button>

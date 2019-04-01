@@ -1,33 +1,27 @@
 import { Meteor } from "meteor/meteor";
 import { sendEmail } from "./email";
-import { analyze, isEarlier, isLater, isLonger } from "./utils";
+import { analyze, isEarlier, isLater, isLonger, trimEvents } from "./utils";
 import config from "../../nudge-config.json";
 
-export const eventsToday = (events, user=Meteor.user()) => {
+// Server environment - UTC time
+export const eventsToday = (events, user=Meteor.user(), send=true) => {
 	if (events && events.items) {
-		events = events.items.map(e => e.summary);
-		sendEmail(events, user);
+		events = trimEvents(events.items);
+		let suggestion = [];
+
+		events.forEach(e => {
+			console.log(e);
+		});
+
+		if (send) {
+			sendEmail(suggestion, user);
+		}
 	
 		return events;
 	}
 	
 	return [];
 };
-
-export const checkCalendar = () => new Promise((resolve, reject) => {
-	GoogleApi.get("/calendar/v3/calendars/primary/events", {
-		params: {
-			timeMin: new Date().toISOString(),
-			timeMax: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString()
-		}
-	}, (err, res) => {
-		if (err) {
-			reject(err);
-		}
-
-		resolve(eventsToday(res));
-	});
-});
 
 // Browser environment - local time applies to the Date Time.
 export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve, reject) => {
@@ -48,16 +42,10 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve
 			earliest: null,
 			latest: null,
 			longest: null,
+			timezone: TimezonePicker.detectedZone()
 		};
 
-		events = events.filter(e => (e.status !== "cancelled" && e.start && e.start.dateTime && e.end && e.end.dateTime));
-		events = events.map(e => ({
-			created: e.created,
-			end: e.end,
-			start: e.start,
-			summary: e.summary		// can be dropped later.
-		}));
-
+		events = trimEvents(events);
 		events.forEach(e => {
 			try {
 				const curStart = new Date(e.start.dateTime);
@@ -95,49 +83,11 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve
 });
 
 Meteor.methods({
-	"getCalendar"() {
-		return checkCalendar();
-	},
-
-	"loadData"() {
-		return loadUserPastData(this.userId);
-	},
-
 	"updateProfile"(id, profile) {
 		Meteor.users.update({ _id: id }, {
 			$set: {
 				"nudgeProfile": profile
 			}
 		});
-
-		// const time = new Date(profile.earliest.start.dateTime);
-		// const schedule = `at ${time.getHours() + Math.floor(time.getTimezoneOffset() / 60)}:${`${time.getMinutes() < 10 ? "0" : ""}${time.getMinutes()}`}${config.ignore.length > 0 ? ` except on ${config.ignore.join()}` : ""}`;
-		// // const test_schedule = "at 23:37";
-
-		// SyncedCron.add({
-		// 	name: `checking user ${id}'s calendar ${schedule}...`,
-		// 	schedule: parser => parser.text(schedule),
-		// 	job: () => {
-		// 		const user = Meteor.users.findOne({ _id: id });
-		// 		console.log(`checking ${user.services.google.name}'s calendar`);
-				
-		// 		const startOfDay = moment().startOf("day").toDate();
-		// 		const endOfDay = moment().endOf("day").toDate();
-
-		// 		GoogleApi.get("/calendar/v3/calendars/primary/events", {
-		// 			user,
-		// 			params: {
-		// 				timeMin: startOfDay.toISOString(),
-		// 				timeMax: endOfDay.toISOString()
-		// 			}
-		// 		}, (err, res) => {
-		// 			if (err || !config.outgoing.includes("email")) {
-		// 				return;
-		// 			}
-	
-		// 			eventsToday(res, user);
-		// 		});
-		// 	}
-		// });
 	}
 });
