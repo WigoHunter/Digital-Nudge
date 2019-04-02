@@ -1,31 +1,88 @@
 import { Meteor } from "meteor/meteor";
 import { sendEmail } from "./email";
-import { analyze, isEarlier, isLater, isLonger, trimEvents, fromLocalToUTC /*, getNextTime */} from "./utils";
+import { analyze, isEarlier, isLater, isLonger, trimEvents, reverse, fromLocalToUTC /*, getNextTime */} from "./utils";
 import config from "../../nudge-config.json";
 
+export const loadBuzytime = (user, min, max) => new Promise((resolve, reject) => {
+	GoogleApi.post("/calendar/v3/freeBusy", {
+		user,
+		data: {
+			timeMax: `${max}`,
+			timeMin: `${min}`,
+			items: [{ id: "primary" }]
+		}
+	}, (err, res) => {
+		if (err || !res.calendars || !res.calendars.primary) {
+			reject(err);
+		}
+
+		resolve(res.calendars.primary.busy);
+	});
+});
+
 // Server environment - UTC time
-export const processEvents = (events, user=Meteor.user(), send=true) => {
+export const processEvents = async (events, user=Meteor.user(), send=true) => {
 	if (events && events.items) {
+		// Initialize variables
 		events = trimEvents(events.items);
 		const profile = user.nudgeProfile;
+		const lastSuggestion = profile.lastSuggestion;
 		const timezone = profile.timezone || null;
-		let suggestion = {};
-		let start = fromLocalToUTC(`${config.suggestion.start}:00`, timezone);
+		const min = fromLocalToUTC(`${config.suggestion.start}:00`, timezone).format();
+		const max = fromLocalToUTC(`${config.suggestion.end}:00`, timezone).format();
+		let busy = null;
+		let suggestion = {
+			time: null,
+			title: null,
+		};
 
-		while (suggestion.time == null) {
-			console.log(`for ${user.services.google.name}: test ${start.format("HH:mm")} now`);
-			suggestion.time = 1;
-			// START HERE: await GoogleApi.get()
+		// events.forEach(e => console.log(e));
+
+		// Load busy time async
+		try {
+			busy = await loadBuzytime(user, min, max);
+		} catch (e) {
+			console.log(`Error occurred: ${e}`);
+		}
+
+		// Get largest free time
+		const time = reverse(busy, min, max).reduce((prev, next) => {
+			return (new Date(prev.end).getTime() - new Date(prev.start).getTime()) > (new Date(next.end).getTime() - new Date(next.start).getTime())
+				? prev
+				: next;
+		});
+
+		// Null if it's less than 1 hour
+		suggestion.time = (new Date(time.end).getTime() - new Date(time.start).getTime()) < 1000 * 60 * 60 ? null : time;
+
+		// Get yesterday's planned event, for next suggestion.
+		if (lastSuggestion != null) {
+			const start = new Date(lastSuggestion.start || "");
+			const end = new Date(lastSuggestion.end || "");
+			const event = events.find(e => 
+				new Date(e.start.dateTime).getHours() == start.getHours()
+					&& new Date(e.start.dateTime).getMinutes() == start.getMinutes()
+					&& new Date(e.end.dateTime).getHours() == end.getHours()
+					&& new Date(e.end.dateTime).getMinutes() == end.getMinutes()
+			);
+
+			if (event) {
+				suggestion.title = event.summary || "";
+			}
 		}
 
 		if (send) {
 			sendEmail(suggestion, user);
 		}
 	
-		return events;
+		console.log(`----- Suggestion built up for ${user.services.google.name} -----`);
+		console.log(suggestion);
+		console.log(`----- End of Suggestion built up for ${user.services.google.name} -----`);
+		Meteor.call("updateLastSuggestion", user._id, suggestion.time);
+		return suggestion;
 	}
 	
-	return [];
+	return null;
 };
 
 // Browser environment - local time applies to the Date Time.
@@ -47,7 +104,8 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve
 			earliest: null,
 			latest: null,
 			longest: null,
-			timezone: TimezonePicker.detectedZone()
+			timezone: TimezonePicker.detectedZone(),
+			lastSuggestion: null
 		};
 
 		events = trimEvents(events);
@@ -94,5 +152,13 @@ Meteor.methods({
 				"nudgeProfile": profile
 			}
 		});
-	}
+	},
+
+	"updateLastSuggestion"(id, time) {
+		Meteor.users.update({ _id: id }, {
+			$set: {
+				"nudgeProfile.lastSuggestion": time
+			}
+		});
+	},
 });

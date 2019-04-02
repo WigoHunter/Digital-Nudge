@@ -102,3 +102,24 @@ export const trimEvents = events => events
 		start: e.start,
 		summary: e.summary
 	}));
+
+export const reverse = (busy, min, max) => {
+	let res = [];
+	let start = min;
+
+	busy.forEach(time => {
+		res.push({
+			start,
+			end: time.start
+		});
+
+		start = time.end;
+	});
+
+	res.push({
+		start,
+		end: max
+	});
+
+	return res;
+};
