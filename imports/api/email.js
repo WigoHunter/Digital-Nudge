@@ -17,10 +17,13 @@ export const sendEmail = (suggestion, user=Meteor.user()) => {
 				subject: "Hello From Digital Nudge",
 				templateId: "d-5934901c3a1d48048bdd247ef0166839",
 				dynamic_template_data: {
-					subject: "Hello From Digital Nudge",
-					gctext: "You are slacking off!!",
-					gcdate: "20190324T220000Z/20190324T230000Z",
-					gcbtnname: "Work on project",
+					"subject": "Hello From Digital Nudge",
+					"gctext": "You are slacking off!",
+					"with-suggestion": true,
+					"suggestion": {
+						"time": "20190324T220000Z/20190324T230000Z",
+						"title": "Work on project"
+					}
 				},
 			};
 			sgMail.send(msg);
