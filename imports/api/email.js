@@ -12,13 +12,13 @@ export const sendEmail = (suggestion, user=Meteor.user()) => {
 
 		try {
 			const msg = {
-				to: "bwzhangtopone@gmail.com",
+				to: user.services.google.email,
 				from: "kevin@nudges.ml",
 				subject: "Hello From Digital Nudge",
 				templateId: "d-5934901c3a1d48048bdd247ef0166839",
 				dynamic_template_data: {
 					subject: "Hello From Digital Nudge",
-					gctext: "You are slacking off!",
+					gctext: "You are slacking off!!",
 					gcdate: "20190324T220000Z/20190324T230000Z",
 					gcbtnname: "Work on project",
 				},

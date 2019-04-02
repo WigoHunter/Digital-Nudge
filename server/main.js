@@ -9,6 +9,7 @@ import keys from "../keys";
 
 // Test
 // import { scheduleJobs } from "../imports/api/scheduledJob";
+// import { sendEmail } from "../imports/api/email";
 import { t_suggestion } from "../imports/api/tests";
 
 Meteor.startup(() => {
@@ -18,6 +19,7 @@ Meteor.startup(() => {
 
 	// Test schedule jobs
 	// scheduleJobs();
+	// sendEmail([], Meteor.users.findOne());
 
 	// Test suggestion
 	Meteor.users.find().fetch().forEach(user => {
