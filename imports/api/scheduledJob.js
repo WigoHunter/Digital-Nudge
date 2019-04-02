@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import config from "../../nudge-config.json";
 import { getNextTime, fromLocalToUTC } from "./utils";
-import { eventsToday } from "./calendar";
+import { processEvents } from "./calendar";
 
 export const schedule = config.ignore.length ? `at 12:00 pm except on ${config.ignore.join()}` : "at 12:00 pm";
 
@@ -69,14 +69,14 @@ export const scheduleJobs = () => {
 					user,
 					params: {
 						timeMin: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-						timeMax: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString()
+						timeMax: new Date().toISOString()
 					}
 				}, (err, res) => {
 					if (err || !config.outgoing.includes("email")) {
 						return;
 					}
 	
-					eventsToday(res, user);
+					processEvents(res, user);
 				});
 			}
 		});

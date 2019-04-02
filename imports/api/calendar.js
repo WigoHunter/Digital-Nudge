@@ -1,17 +1,22 @@
 import { Meteor } from "meteor/meteor";
 import { sendEmail } from "./email";
-import { analyze, isEarlier, isLater, isLonger, trimEvents } from "./utils";
+import { analyze, isEarlier, isLater, isLonger, trimEvents, fromLocalToUTC /*, getNextTime */} from "./utils";
 import config from "../../nudge-config.json";
 
 // Server environment - UTC time
-export const eventsToday = (events, user=Meteor.user(), send=true) => {
+export const processEvents = (events, user=Meteor.user(), send=true) => {
 	if (events && events.items) {
 		events = trimEvents(events.items);
-		let suggestion = [];
+		const profile = user.nudgeProfile;
+		const timezone = profile.timezone || null;
+		let suggestion = {};
+		let start = fromLocalToUTC(`${config.suggestion.start}:00`, timezone);
 
-		events.forEach(e => {
-			console.log(e);
-		});
+		while (suggestion.time == null) {
+			console.log(`for ${user.services.google.name}: test ${start.format("HH:mm")} now`);
+			suggestion.time = 1;
+			// START HERE: await GoogleApi.get()
+		}
 
 		if (send) {
 			sendEmail(suggestion, user);
