@@ -11,6 +11,10 @@ class App extends Component {
 	static propTypes = {
 		user: PropTypes.object
 	}
+
+	componentDidMount() {
+		console.log("last deployed: 2019/04/02");
+	}
 	
 	render() {
 		const { user } = this.props;
