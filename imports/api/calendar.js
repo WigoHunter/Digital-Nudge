@@ -34,7 +34,7 @@ export const processEvents = async (events, user=Meteor.user(), send=true) => {
 		let busy = null;
 		let suggestion = {
 			time: null,
-			title: null,
+			title: config.defaults.title,
 		};
 
 		// events.forEach(e => console.log(e));
@@ -68,7 +68,7 @@ export const processEvents = async (events, user=Meteor.user(), send=true) => {
 			);
 
 			if (event) {
-				suggestion.title = event.summary || "";
+				suggestion.title = event.summary || config.defaults.title;
 			}
 		}
 

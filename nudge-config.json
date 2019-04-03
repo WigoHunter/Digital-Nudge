@@ -8,7 +8,8 @@
 	},
 	"suggestion": {
 		"start": 19,
-		"end": 22
+		"end": 22,
+		"max": 3
 	},
 	"userUsageTypes": {
 		"Heavy": 20,
@@ -21,6 +22,7 @@
 		"early": 9
 	},
 	"defaults": {
-		"send": 9 
+		"send": 9,
+		"title": ""
 	}
 }
