@@ -1,4 +1,5 @@
 import { Meteor } from "meteor/meteor";
+import jstz from "jstz";
 import { sendEmail } from "./email";
 import { analyze, isEarlier, isLater, isLonger, trimEvents, reverse, fromLocalToUTC /*, getNextTime */} from "./utils";
 import config from "../../nudge-config.json";
@@ -104,7 +105,7 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve
 			earliest: null,
 			latest: null,
 			longest: null,
-			timezone: TimezonePicker.detectedZone(),
+			timezone: jstz.determine().name(),
 			lastSuggestion: null
 		};
 
