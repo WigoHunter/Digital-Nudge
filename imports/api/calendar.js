@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import jstz from "jstz";
 import { sendEmail } from "./email";
-import { analyze, isEarlier, isLater, isLonger, trimEvents, reverse, fromLocalToUTC /*, getNextTime */} from "./utils";
+import { calcEventsSpan, analyze, isEarlier, isLater, isLonger, trimEvents, reverse, fromLocalToUTC /*, getNextTime */} from "./utils";
 import config from "../../nudge-config.json";
 
 export const loadBuzytime = (user, min, max) => new Promise((resolve, reject) => {
@@ -31,10 +31,12 @@ export const processEvents = async (events, user=Meteor.user(), send=true) => {
 		const timezone = profile.timezone || null;
 		const min = fromLocalToUTC(`${config.suggestion.start}:00`, timezone).format();
 		const max = fromLocalToUTC(`${config.suggestion.end}:00`, timezone).format();
+		const span = calcEventsSpan(events);
 		let busy = null;
 		let suggestion = {
 			time: null,
 			title: config.defaults.title,
+			span: span,
 		};
 
 		// events.forEach(e => console.log(e));

@@ -123,3 +123,14 @@ export const reverse = (busy, min, max) => {
 
 	return res;
 };
+
+export const calcEventsSpan = (events) => {
+	let span = 0;
+	for (let i=0; i<events.length; i++){
+		let startTime = moment(events[i].start.dateTime);
+		let endTime = moment(events[i].end.dateTime);
+		let duration = moment.duration(endTime.diff(startTime));
+		span += duration.hours();
+	}
+	return span;
+};

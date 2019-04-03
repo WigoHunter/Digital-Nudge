@@ -28,7 +28,8 @@ export const sendEmail = (suggestion, user=Meteor.user()) => {
 					"suggestion": {
 						// "time": "20190324T220000Z/20190324T230000Z",
 						"time": date,
-						"title": suggestion.title
+						"title": suggestion.title,
+						"span": suggestion.span,
 					}
 				},
 			};
