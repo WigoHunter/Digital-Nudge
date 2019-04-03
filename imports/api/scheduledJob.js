@@ -63,7 +63,7 @@ export const scheduleJobs = () => {
 			name: `checking user ${user._id}'s calendar at ${nextScheduledTime.toISOString()}...`,
 			schedule: parser => parser.recur().on(nextScheduledTime).fullDate(),
 			job: () => {
-				console.log(`----- Checking ${user.services.google.name}'s calendar -----`);
+				console.log(`----- Checking ${user.services.google.name}'s Calendar -----`);
 				
 				GoogleApi.get("/calendar/v3/calendars/primary/events", {
 					user,
