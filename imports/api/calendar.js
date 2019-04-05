@@ -46,7 +46,7 @@ export const processEvents = async (events, user=Meteor.user(), send=true) => {
 			trackPastWeekEventSpan(user);
 		} else {
 			console.log(`----- Old User ${user.services.google.name} detected -----`);
-			let spanForPastWeek = user.nudgeProfile.spanForPastWeek || [];
+			let spanForPastWeek = user.spanForPastWeek || [];
 			spanForPastWeek.shift();
 			spanForPastWeek.push(span);
 			console.log(`----- ${user.services.google.name}'s spanning hours for last week events -----`);
@@ -243,7 +243,7 @@ Meteor.methods({
 	"updateSpanForLastWeek"(id, spanForPastWeek) {
 		Meteor.users.update({ _id: id }, {
 			$set: {
-				"nudgeProfile.spanForPastWeek": spanForPastWeek
+				"spanForPastWeek": spanForPastWeek
 			}
 		});
 	},
