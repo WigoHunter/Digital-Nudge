@@ -10,7 +10,7 @@ import keys from "../keys";
 // Tests
 // import { scheduleJobs } from "../imports/api/scheduledJob";
 // import { sendEmail } from "../imports/api/email";
-// import { t_suggestion } from "../imports/api/tests";
+import { t_suggestion } from "../imports/api/tests";
 
 Meteor.startup(() => {
 	process.env.MAIL_URL = keys.sendGrid.server;
@@ -22,7 +22,7 @@ Meteor.startup(() => {
 	// sendEmail([], Meteor.users.findOne());
 
 	// Test suggestion
-	// Meteor.users.find().fetch().forEach(user => {
-	// 	t_suggestion(user);
-	// });
+	Meteor.users.find().fetch().forEach(user => {
+		t_suggestion(user);
+	});
 });

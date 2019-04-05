@@ -130,7 +130,7 @@ export const calcEventsSpan = (events) => {
 		let startTime = moment(events[i].start.dateTime);
 		let endTime = moment(events[i].end.dateTime);
 		let duration = moment.duration(endTime.diff(startTime));
-		span += duration.hours();
+		span += duration.asMinutes();
 	}
-	return span;
+	return Math.ceil(span / 60);
 };
