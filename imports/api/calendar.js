@@ -25,19 +25,33 @@ export const loadBuzytime = (user, min, max) => new Promise((resolve, reject) =>
 export const processEvents = async (events, user=Meteor.user(), send=true) => {
 	if (events && events.items) {
 		// Initialize variables
-		events = trimEvents(events.items);
+		events = trimEvents(events.items);		
+		const span = calcEventsSpan(events);
+		const newUser = user.newUser;
 		const profile = user.nudgeProfile;
 		const lastSuggestion = profile.lastSuggestion;
 		const timezone = profile.timezone || null;
 		const min = fromLocalToUTC(`${config.suggestion.start}:00`, timezone).format();
 		const max = fromLocalToUTC(`${config.suggestion.end}:00`, timezone).format();
-		const span = calcEventsSpan(events);
 		let busy = null;
 		let suggestion = {
 			time: null,
 			title: config.defaults.title,
 			span: span,
 		};
+
+		if (newUser) {
+			console.log(`----- New User ${user.services.google.name} detected -----`);
+			trackPastWeekEventSpan(user);
+		} else {
+			console.log(`----- Old User ${user.services.google.name} detected -----`);
+			let spanForPastWeek = user.spanForPastWeek;
+			spanForPastWeek.shift();
+			spanForPastWeek.push(span);
+			console.log(`----- ${user.services.google.name} \'s spanning hours for last week events -----`);
+			console.log(spanForPastWeek);
+			Meteor.call("updateSpanForLastWeek", user._id, spanForPastWeek);
+		}
 
 		// events.forEach(e => console.log(e));
 
@@ -148,6 +162,67 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve
 	});
 });
 
+const trackPastWeekEventSpan = (user) =>  {
+	GoogleApi.get("/calendar/v3/calendars/primary/events", {
+		user,
+		params: {
+			timeMax: new Date().toISOString(),
+			timeMin: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+		}
+	}, (err, res) => {
+		if (err) {
+			return new Array(7).fill(0);
+		}
+
+		let events = res.items;
+		events = trimEvents(events);
+
+		let timestamps = []
+		for (let i = 0; i < events.length; i++){
+			timestamps.push({
+				startTime : moment(events[i].start.dateTime),
+				duration : moment.duration(moment(events[i].end.dateTime).diff(
+					moment(events[i].start.dateTime)))
+			})
+		}
+
+		timestamps.sort((a,b) => {
+			if (a.startTime.isBefore(b.startTime)){
+				return 1;
+			}
+			return -1;
+		});
+
+		let currTime = moment();
+		let ydaTime = moment(currTime);
+		ydaTime.subtract(1, 'days');
+		let idx = 0;
+		let spanForPastWeek = new Array(7).fill(0);
+
+		for (let i = 0; i < 7; i++){
+			let hrsCnt = 0;
+			while (idx < timestamps.length) {
+				tmp = timestamps[idx].startTime;
+				if (tmp.isBefore(currTime) && ydaTime.isBefore(tmp)){
+					hrsCnt += timestamps[idx].duration.hours();
+					idx += 1;
+				} else {
+					break;
+				}
+			}
+
+			spanForPastWeek[6-i] = hrsCnt;
+			currTime.subtract(1, 'days');
+			ydaTime.subtract(1, 'days');
+		}
+		
+		console.log(`----- ${user.services.google.name} \'s spanning hours for last week events -----`);
+		console.log(spanForPastWeek);
+		Meteor.call("updateSpanForLastWeek", user._id, spanForPastWeek);
+		Meteor.call("setUserToOld", user._id);
+	});
+}
+
 Meteor.methods({
 	"updateProfile"(id, profile) {
 		Meteor.users.update({ _id: id }, {
@@ -161,6 +236,22 @@ Meteor.methods({
 		Meteor.users.update({ _id: id }, {
 			$set: {
 				"nudgeProfile.lastSuggestion": time
+			}
+		});
+	},
+
+	"updateSpanForLastWeek"(id, spanForPastWeek) {
+		Meteor.users.update({ _id: id }, {
+			$set: {
+				"spanForPastWeek": spanForPastWeek
+			}
+		});
+	},
+
+	"setUserToOld"(id) {
+		Meteor.users.update({ _id: id }, {
+			$set: {
+				"newUser": false
 			}
 		});
 	},
