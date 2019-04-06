@@ -11,6 +11,7 @@ import keys from "../keys";
 // import { scheduleJobs } from "../imports/api/scheduledJob";
 // import { sendEmail } from "../imports/api/email";
 // import { t_suggestion } from "../imports/api/tests";
+// import { draw } from "../imports/api/utils";
 
 Meteor.startup(() => {
 	process.env.MAIL_URL = keys.sendGrid.server;
@@ -20,6 +21,10 @@ Meteor.startup(() => {
 	// Test schedule jobs
 	// scheduleJobs();
 	// sendEmail([], Meteor.users.findOne());
+
+	// Test drawing the chart
+	// const svg = draw(Meteor.users.findOne());
+	// console.log(svg);
 
 	// Test suggestion
 	// Meteor.users.find().fetch().forEach(user => {

@@ -1,3 +1,5 @@
+import { Meteor } from "meteor/meteor";
+
 const findUsageType = (profile, config) => {
 	const userUsageTypes = config.userUsageTypes;
 	const usages = Object.keys(userUsageTypes).sort((a, b) => userUsageTypes[b] - userUsageTypes[a]);
@@ -132,5 +134,17 @@ export const calcEventsSpan = (events) => {
 		let duration = moment.duration(endTime.diff(startTime));
 		span += duration.asMinutes();
 	}
-	return Math.ceil(span / 60);
+	return span / 60;
 };
+
+export const callWithPromise = (method, ...params) => new Promise((resolve, reject) => {
+	Meteor.call(method, ...params, (err, res) => {
+		if (err) {
+			reject(err);
+		}
+
+		resolve(res);
+	});
+});
+
+export const average = list => list.reduce((prev, curr) => prev + curr, 0) / list.length;

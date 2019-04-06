@@ -13,6 +13,6 @@ export const t_suggestion = user => {
 			return;
 		}
 
-		processEvents(res, user, false);
+		processEvents(res, user, true);
 	});
 };
