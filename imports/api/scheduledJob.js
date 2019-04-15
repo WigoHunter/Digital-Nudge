@@ -1,11 +1,9 @@
 import { Meteor } from "meteor/meteor";
-import config from "../../nudge-config.json";
-import { getNextTime, fromLocalToUTC } from "./utils";
+// import config from "../../nudge-config.json";
+import { getNextTime, fromLocalToUTC, callWithPromise } from "./utils";
 import { processEvents } from "./calendar";
 
-export const schedule = config.ignore.length ? `at 12:00 pm except on ${config.ignore.join()}` : "at 12:00 pm";
-
-const withProfile = profile => {
+const withProfile = (profile, config) => {
 	const timezone = profile.timezone || null;
 	const earliest = new Date(profile.earliest.start.dateTime);
 	let nextScheduledTime = getNextTime(earliest);
@@ -33,7 +31,7 @@ const withProfile = profile => {
 	return nextScheduledTime;
 };
 
-const withDefault = profile => {
+const withDefault = (profile, config) => {
 	const timezone = profile.timezone || "America/New_York";
 	const time = fromLocalToUTC(`${config.defaults.send}:00`, timezone).format("HH") - 0;
 	let nextScheduledTime = new Date();
@@ -44,14 +42,16 @@ const withDefault = profile => {
 	return nextScheduledTime;
 };
 
-export const scheduleJobs = () => {
+export const scheduleJobs = async () => {
+	// Load config
+	const config = await callWithPromise("getConfig");
 	const users = Meteor.users.find().fetch();
 
 	users.forEach(user => {
 		const profile = user.nudgeProfile;
 		console.log("");
 		console.log(`----- Started Scheduling ${user.services.google.name}'s Service------`);
-		const nextScheduledTime = (!profile || !profile.earliest) ? withDefault(profile) : withProfile(profile);		
+		const nextScheduledTime = (!profile || !profile.earliest) ? withDefault(profile, config) : withProfile(profile, config);		
 
 		// TODO: Ignore on the configured days - turn off for testing
 
@@ -76,7 +76,7 @@ export const scheduleJobs = () => {
 						return;
 					}
 	
-					processEvents(res, user);
+					processEvents(res, user, config);
 				});
 			}
 		});

@@ -2,7 +2,8 @@ import { Meteor } from "meteor/meteor";
 import jstz from "jstz";
 import { sendEmail } from "./email";
 import { calcEventsSpan, analyze, isEarlier, isLater, isLonger, trimEvents, reverse, fromLocalToUTC, callWithPromise } from "./utils";
-import config from "../../nudge-config.json";
+// import config from "../../nudge-config.json";
+import { Config } from "../db/configs";
 
 export const loadBuzytime = (user, min, max) => new Promise((resolve, reject) => {
 	GoogleApi.post("/calendar/v3/freeBusy", {
@@ -22,8 +23,8 @@ export const loadBuzytime = (user, min, max) => new Promise((resolve, reject) =>
 });
 
 // Server environment - UTC time
-export const processEvents = async (events, user=Meteor.user(), send=true) => {
-	if (events && events.items) {
+export const processEvents = async (events, user=Meteor.user(), config=Config.findOne(), send=true) => {
+	if (events && events.items && config) {
 		// Initialize variables
 		events = trimEvents(events.items);		
 		const span = calcEventsSpan(events);
@@ -103,7 +104,9 @@ export const processEvents = async (events, user=Meteor.user(), send=true) => {
 };
 
 // Browser environment - local time applies to the Date Time.
-export const loadUserPastData = (id = Meteor.user()._id) => new Promise((resolve, reject) => {
+export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (resolve, reject) => {
+	const config = await callWithPromise("getConfig");
+	
 	GoogleApi.get("/calendar/v3/calendars/primary/events", {
 		params: {
 			timeMax: new Date().toISOString(),
@@ -228,6 +231,9 @@ export const trackPastWeekEventSpan = async user =>  {
 };
 
 Meteor.methods({
+	"getConfig"() {
+		return Config.findOne();
+	},
 	"updateProfile"(id, profile) {
 		Meteor.users.update({ _id: id }, {
 			$set: {

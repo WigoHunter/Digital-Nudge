@@ -70,7 +70,7 @@ const draw = spans => {
 		return res;
 	}
 
-	return "function only works on server side";
+	return "chart failed...";
 };
 
 export default draw;

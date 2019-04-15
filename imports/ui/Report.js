@@ -1,11 +1,18 @@
 /* eslint-disable react/prop-types */
 import React from "react";
+import { Meteor } from "meteor/meteor";
 import { mostActive } from "../api/utils";
-import config from "../../nudge-config";
+import { withTracker } from "meteor/react-meteor-data";
+import { Config } from "../db/configs";
+// import config from "../../nudge-config";
 
 const formatMinutes = minutes => `${minutes / 60 > 0 ? `${Math.floor(minutes / 60)} hour(s) ` : ""}${minutes % 60 > 0 ? `${minutes % 60} minute(s)` : ""}`;
 
-const Report = ({ profile }) => {
+const Report = ({ profile, loading, config }) => {
+	if (loading) {
+		return null;
+	}
+
 	if (!profile || !profile.earliest || !profile.latest || !profile.longest) {
 		// Can put user form here...
 		return null;
@@ -33,4 +40,13 @@ const Report = ({ profile }) => {
 	);
 };
 
-export default Report;
+export default withTracker(() => {
+	const sub = Meteor.subscribe("config.usertype");
+	const loading = !sub.ready();
+	const config = Config.findOne();
+
+	return {
+		loading,
+		config
+	};
+})(Report);

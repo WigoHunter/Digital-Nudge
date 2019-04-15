@@ -1,7 +1,6 @@
-import config from "../../nudge-config";
 import { processEvents } from "./calendar";
 
-export const t_suggestion = user => {
+export const t_suggestion = (user, config) => {
 	GoogleApi.get("/calendar/v3/calendars/primary/events", {
 		user,
 		params: {
@@ -13,6 +12,6 @@ export const t_suggestion = user => {
 			return;
 		}
 
-		processEvents(res, user, true);
+		processEvents(res, user, config, false);
 	});
 };

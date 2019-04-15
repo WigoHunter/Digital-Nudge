@@ -1,14 +1,17 @@
 import { Meteor } from "meteor/meteor";
 import keys from "../../keys";
 import sgMail from "@sendgrid/mail";
-import { fromUTCToLocal, average } from "./utils";
+import { fromUTCToLocal, average, callWithPromise } from "./utils";
 import draw from "./draw";
 
 sgMail.setApiKey(keys["sendGrid"]["key"]);
 
-export const sendEmail = (suggestion, user=Meteor.user()) => {
+export const sendEmail = async (suggestion, user=Meteor.user()) => {
 	// Check if the user has gmail first. In case google.email runs into error.
 	if (user && user.services.google) {
+		// Load config
+		const config = await callWithPromise("getConfig");
+
 		console.log(`sending email to ${user.services.google.email}...`);
 		let date = "";
 		const withSuggestion = suggestion.time != null;
@@ -35,11 +38,11 @@ export const sendEmail = (suggestion, user=Meteor.user()) => {
 					"subject": "Hello From Digital Nudge",
 					"gctext": withSuggestion ? "Let's make some plans today!" : "Awesome job! Good luck working hard today!",
 					"with-suggestion": withSuggestion,
+					"suggestion_text": config.suggestionText,
 					"chart": "" + chart,
 					"hours": `${localStart.format("HH:mm")} - ${localEnd.format("HH:mm")}`,
 					"analysis": suggestion.span >= avg ? `Keep up the good work! You planned for ${suggestion.span.toFixed(2)} hours yesterday, which is ${avg == 0 ? "N" : (suggestion.span / avg).toFixed(2)} times more than average!` : `Let's GO! It seems like you planned less than your average performance in last week (${suggestion.span.toFixed(2)} hours v.s. ${avg.toFixed(2)} hours on average last week!)`,
 					"suggestion": {
-						// "time": "20190324T220000Z/20190324T230000Z",
 						"time": date,
 						"title": suggestion.title,
 						"span": suggestion.span,
