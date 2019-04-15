@@ -2,7 +2,6 @@ import { Meteor } from "meteor/meteor";
 import jstz from "jstz";
 import { sendEmail } from "./email";
 import { calcEventsSpan, analyze, isEarlier, isLater, isLonger, trimEvents, reverse, fromLocalToUTC, callWithPromise } from "./utils";
-// import config from "../../nudge-config.json";
 import { Config } from "../db/configs";
 
 export const loadBuzytime = (user, min, max) => new Promise((resolve, reject) => {
@@ -38,7 +37,7 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		let suggestion = {
 			time: null,
 			title: config.defaults.title,
-			span: span,
+			span,
 		};
 
 		// Process hours in the past day
@@ -64,14 +63,24 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		}
 
 		// Get largest free time
-		const time = reverse(busy, min, max).reduce((prev, next) => {
+		let time = reverse(busy, min, max).reduce((prev, next) => {
 			return (new Date(prev.end).getTime() - new Date(prev.start).getTime()) > (new Date(next.end).getTime() - new Date(next.start).getTime())
 				? prev
 				: next;
 		});
 
+		const interval = new Date(time.end).getTime() - new Date(time.start).getTime();
+		
 		// Null if it's less than 1 hour
-		suggestion.time = (new Date(time.end).getTime() - new Date(time.start).getTime()) < 1000 * 60 * 60 ? null : time;
+		time = interval < 1000 * 60 * 60 ? null : time;
+
+		// Cut if it's larger than _max_ hour
+		const maxTime = ((config && config.suggestion) ? config.suggestion.max : 3) * 1000 * 60 * 60;
+		if (interval > maxTime) {
+			time.end = new Date(new Date(time.start).getTime() + maxTime);
+		}
+
+		suggestion.time = time;
 
 		// Get yesterday's planned event, for next suggestion.
 		if (lastSuggestion != null) {

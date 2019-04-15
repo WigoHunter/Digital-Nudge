@@ -9,7 +9,7 @@
 	"suggestion": {
 		"start": 10,
 		"end": 17,
-		"max": 3
+		"max": 1
 	},
 	"suggestionText": "Seems you have some free time on your calendar today. <br/> Why don't you fill it in with your project or works! Better productivity, better rewards!",
 	"userUsageTypes": {

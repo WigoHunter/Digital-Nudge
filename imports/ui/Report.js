@@ -4,7 +4,6 @@ import { Meteor } from "meteor/meteor";
 import { mostActive } from "../api/utils";
 import { withTracker } from "meteor/react-meteor-data";
 import { Config } from "../db/configs";
-// import config from "../../nudge-config";
 
 const formatMinutes = minutes => `${minutes / 60 > 0 ? `${Math.floor(minutes / 60)} hour(s) ` : ""}${minutes % 60 > 0 ? `${minutes % 60} minute(s)` : ""}`;
 

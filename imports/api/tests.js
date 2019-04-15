@@ -1,6 +1,6 @@
 import { processEvents } from "./calendar";
 
-export const t_suggestion = (user, config) => {
+export const t_suggestion = (user, config, send=false) => {
 	GoogleApi.get("/calendar/v3/calendars/primary/events", {
 		user,
 		params: {
@@ -12,6 +12,6 @@ export const t_suggestion = (user, config) => {
 			return;
 		}
 
-		processEvents(res, user, config, false);
+		processEvents(res, user, config, send);
 	});
 };

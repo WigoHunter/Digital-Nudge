@@ -38,6 +38,6 @@ Meteor.startup(() => {
 
 	// Test suggestion
 	// Meteor.users.find().fetch().forEach(user => {
-	// 	t_suggestion(user, config);
+	// 	t_suggestion(user, (config || seedConfig), false);
 	// });
 });

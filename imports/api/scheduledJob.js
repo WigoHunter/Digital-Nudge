@@ -1,5 +1,4 @@
 import { Meteor } from "meteor/meteor";
-// import config from "../../nudge-config.json";
 import { getNextTime, fromLocalToUTC, callWithPromise } from "./utils";
 import { processEvents } from "./calendar";
 
