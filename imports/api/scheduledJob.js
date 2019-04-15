@@ -21,7 +21,7 @@ const withProfile = (profile, config) => {
 	}
 
 	// Upper bound
-	if (utcHour >= upperBound) {
+	else if (utcHour >= upperBound) {
 		console.log(`Upper bound reached! ${utcHour} is later than ${upperBound}:00`);
 		nextScheduledTime.setHours(upperBound);
 		nextScheduledTime.setMinutes(0);
