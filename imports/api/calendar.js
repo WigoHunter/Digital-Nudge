@@ -243,6 +243,13 @@ Meteor.methods({
 	"getConfig"() {
 		return Config.findOne();
 	},
+	"updateConfig"(config) {
+		Config.update({}, {
+			$set: {
+				...config
+			}
+		});
+	},
 	"updateProfile"(id, profile) {
 		Meteor.users.update({ _id: id }, {
 			$set: {
