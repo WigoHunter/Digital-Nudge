@@ -4,12 +4,12 @@
 	"outgoing": ["email"],
 	"ignore": [6, 0],
 	"bounds": {
-		"lower": 6,
-		"upper": 10
+		"lower": 8,
+		"upper": 12
 	},
 	"suggestion": {
-		"start": 10,
-		"end": 17,
+		"start": 12,
+		"end": 18,
 		"max": 2
 	},
 	"suggestionText": "Seems you have some free time on your calendar today. <br/> Why don't you fill it in with your project or works! Better productivity, better rewards!",

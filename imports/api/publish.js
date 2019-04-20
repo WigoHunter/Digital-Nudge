@@ -8,7 +8,6 @@ if (Meteor.isServer) {
 				_id: 1,
 				emails: 1,
 				services: 1,
-				nudge: 1,
 				nudgeProfile: 1
 			}
 		});

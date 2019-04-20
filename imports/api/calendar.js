@@ -43,13 +43,15 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		// Process hours in the past day
 		if (newUser) {
 			console.log(`----- New User ${user.services.google.name} detected -----`);
-			trackPastWeekEventSpan(user);
+			let spanForPastWeek = await trackPastWeekEventSpan(user);
+			await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
+			await callWithPromise("setUserToOld", user._id);
 		} else {
 			console.log(`----- Old User ${user.services.google.name} detected -----`);
-			let spanForPastWeek = user.spanForPastWeek || [];
+			let spanForPastWeek = user.spanForPastWeek || new Array(7).fill(0);
 			spanForPastWeek.shift();
 			spanForPastWeek.push(span);
-			console.log(`----- ${user.services.google.name}'s spanning hours for last week events -----`);
+			console.log(`----- ${user.services.google.name}'s hours for last week events -----`);
 			console.log(spanForPastWeek);
 			// Meteor.call("updateSpanForLastWeek", user._id, spanForPastWeek);
 			await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
@@ -81,7 +83,6 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		}
 
 		suggestion.time = time;
-		suggestion.title = config.defaults.title;
 
 		// Get yesterday's planned event, for next suggestion.
 		if (lastSuggestion != null) {
@@ -100,7 +101,8 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		}
 
 		if (send) {
-			sendEmail(suggestion, user);
+			const target = await callWithPromise("getFullUser", user._id);
+			sendEmail(suggestion, target);
 		}
 	
 		console.log(`----- Suggestion built up for ${user.services.google.name} -----`);
@@ -164,7 +166,6 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (r
 
 		profile = analyze(profile, config);
 
-		// TODO!!!!: UPDATE will reset lastSuggestion
 		Meteor.call("updateProfile", id, profile, (err, res) => {
 			if (err) {
 				reject(err);
@@ -175,21 +176,20 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (r
 	});
 });
 
-export const trackPastWeekEventSpan = async user =>  {
+export const trackPastWeekEventSpan = user => new Promise((resolve, reject) => {
 	GoogleApi.get("/calendar/v3/calendars/primary/events", {
 		user,
 		params: {
 			timeMax: new Date().toISOString(),
 			timeMin: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 		}
-	}, async (err, res) => {
+	}, (err, res) => {
 		if (err) {
-			return new Array(7).fill(0);
+			resolve(new Array(7).fill(0));
 		}
 
 		let events = res.items || [];
 		events = trimEvents(events);
-
 		let timestamps = [];
 		for (let i = 0; i < events.length; i++){
 			timestamps.push({
@@ -218,6 +218,7 @@ export const trackPastWeekEventSpan = async user =>  {
 				tmp = timestamps[idx].startTime;
 				
 				if (tmp.isBefore(currTime) && ydaTime.isBefore(tmp)){
+					console.log("count!");
 					minutesCount += timestamps[idx].duration.asMinutes();
 					idx += 1;
 				} else {
@@ -230,18 +231,24 @@ export const trackPastWeekEventSpan = async user =>  {
 			ydaTime.subtract(1, "days");
 		}
 		
-		console.log(`----- ${user.services.google.name}'s spanning hours for last week events -----`);
+		console.log(`----- ${user.services.google.name}'s hours for last week events -----`);
 		console.log(spanForPastWeek);
+		if (spanForPastWeek) {
+			resolve(spanForPastWeek);
+		}
+
+		reject(0);
 		// Meteor.call("updateSpanForLastWeek", user._id, spanForPastWeek);
 		// Meteor.call("setUserToOld", user._id);
-		await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
-		await callWithPromise("setUserToOld", user._id);
 	});
-};
+});
 
 Meteor.methods({
 	"getConfig"() {
 		return Config.findOne();
+	},
+	"getFullUser"(id) {
+		return Meteor.users.findOne({ _id: id });
 	},
 	"updateConfig"(config) {
 		Config.update({}, {
