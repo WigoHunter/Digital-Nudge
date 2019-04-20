@@ -29,7 +29,7 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		const span = calcEventsSpan(events);
 		const newUser = user.newUser;
 		const profile = user.nudgeProfile;
-		const lastSuggestion = profile.lastSuggestion;
+		const lastSuggestion = user.lastSuggestion;
 		const timezone = profile.timezone || null;
 		const min = fromLocalToUTC(`${config.suggestion.start}:00`, timezone).format();
 		const max = fromLocalToUTC(`${config.suggestion.end}:00`, timezone).format();
@@ -81,6 +81,7 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		}
 
 		suggestion.time = time;
+		suggestion.title = config.defaults.title;
 
 		// Get yesterday's planned event, for next suggestion.
 		if (lastSuggestion != null) {
@@ -94,7 +95,7 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 			);
 
 			if (event) {
-				suggestion.title = event.summary || config.defaults.title;
+				suggestion.title = event.summary;
 			}
 		}
 
@@ -134,7 +135,6 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (r
 			latest: null,
 			longest: null,
 			timezone: jstz.determine().name(),
-			lastSuggestion: null
 		};
 
 		events = trimEvents(events);
@@ -261,7 +261,7 @@ Meteor.methods({
 	"updateLastSuggestion"(id, time) {
 		Meteor.users.update({ _id: id }, {
 			$set: {
-				"nudgeProfile.lastSuggestion": time
+				"lastSuggestion": time
 			}
 		});
 	},
