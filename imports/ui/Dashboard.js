@@ -2,7 +2,7 @@ import React from "react";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import Report from "./Report";
-import ConfigModal from "./ConfigModal";
+import ConfigModal, { AUTHORIZED } from "./ConfigModal";
 
 // Redux
 import { connect } from "react-redux";
@@ -24,7 +24,9 @@ class Dashboard extends React.Component {
 						<p>loading...</p>
 						:
 						<>
-							<ConfigModal />
+							{(user.services && AUTHORIZED.includes(user.services.google.email))
+								&& <ConfigModal email={user.services.google.email} />
+							}
 							<h3>Welcome to Digital Nudge, {(user.services && user.services.google) && user.services.google.name}!</h3>
 							<Report profile={user.nudgeProfile} />
 							<button className="logout" onClick={() => Meteor.logout()}>

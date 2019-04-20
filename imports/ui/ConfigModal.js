@@ -5,8 +5,15 @@ import { useDropzone } from "react-dropzone";
 import PropTypes from "prop-types";
 import JSONTree from "react-json-tree";
 
-const Dropzone = ({ getConfig }) => {
+export const AUTHORIZED = ["mattandkevin1060@gmail.com", "fnokeke@gmail.com", "sobolevmic2@gmail.com", "bwzhangtopone@gmail.com"];
+
+const Dropzone = ({ getConfig, email }) => {
 	const onDrop = useCallback(files => {
+		if (!AUTHORIZED.includes(email)) {
+			alert("You are not authorized to change configuration!");
+			return;
+		}
+
 		const reader = new FileReader();
 		reader.onload = e => {
 			const config = JSON.parse(e.target.result);
@@ -27,10 +34,15 @@ const Dropzone = ({ getConfig }) => {
 };
 
 Dropzone.propTypes = {
-	getConfig: PropTypes.func
+	getConfig: PropTypes.func,
+	email: PropTypes.string,
 };
 
 class ConfigModal extends React.Component {
+	static propTypes = {
+		email: PropTypes.string
+	};
+
 	constructor() {
 		super();
 
@@ -80,7 +92,7 @@ class ConfigModal extends React.Component {
 					className="modal"
 				>
 					<p className="x" onClick={this.close}>x</p>
-					<Dropzone getConfig={this.getConfig} />
+					<Dropzone getConfig={this.getConfig} email={this.props.email} />
 					{
 						this.state.config &&
 							<>
