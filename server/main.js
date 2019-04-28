@@ -12,8 +12,9 @@ import seedConfig from "../nudge-config";
 // Tests
 // import { scheduleJobs } from "../imports/api/scheduledJob";
 // import { sendEmail } from "../imports/api/email";
-import { t_suggestion } from "../imports/api/tests";
+// import { t_suggestion } from "../imports/api/tests";
 // import { draw } from "../imports/api/utils";
+import { getAllCalendarData } from "../imports/api/data.js";
 
 Meteor.startup(() => {
 	// Seed Configuration
@@ -29,6 +30,9 @@ Meteor.startup(() => {
 	// Start schedules
 	SyncedCron.start();
 
+	// Get all Calendar events for the past n days (all different categories).
+	getAllCalendarData(2 * 365);
+
 	// Test schedule jobs
 	// scheduleJobs();
 
@@ -37,7 +41,7 @@ Meteor.startup(() => {
 	// console.log(svg);
 
 	// Test suggestion
-	Meteor.users.find().fetch().forEach(user => {
-		t_suggestion(user, (config || seedConfig), true);
-	});
+	// Meteor.users.find().fetch().forEach(user => {
+	// 	t_suggestion(user, (config || seedConfig), true);
+	// });
 });

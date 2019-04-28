@@ -44,12 +44,19 @@ class Login extends React.Component {
 
 	render() {
 		return (
-			<div className="login">
-				<h3>Welcome to Digital Nudge as a Service!</h3>
-				<button onClick={() => this.login()}>
-					Login to Subscribe
-				</button>
-			</div>
+			<>
+				<div className="login">
+					<div className="overlay">
+						<h3 className="title">Welcome to <span>Digital Nudge</span> as a Service!</h3>
+						<p>Make use of your Google Calendar data. For <span>Productivity</span>.</p>
+						<button onClick={() => this.login()}>
+							Login to Subscribe
+						</button>
+					</div>
+				</div>
+				<div className="info">
+				</div>
+			</>
 		);
 	}
 }

@@ -28,6 +28,7 @@ class Dashboard extends React.Component {
 								&& <ConfigModal email={user.services.google.email} />
 							}
 							<h3>Welcome to Digital Nudge, {(user.services && user.services.google) && user.services.google.name}!</h3>
+							<p className="sub">You will start receiving personalized daily emails to suggest Calendar events!</p>
 							<Report profile={user.nudgeProfile} />
 							<button className="logout" onClick={() => Meteor.logout()}>
 								Logout

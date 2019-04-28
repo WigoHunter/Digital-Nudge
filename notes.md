@@ -24,3 +24,9 @@ Double check:
 "get a proxy of how early a user wake up"
 Google Fit
 Health Keep for Apple
+
+## To update:
+- Add basic security to configuration setting. Only four of us can upload configuration.json now (Frontend hides the button + Server rejects the request).
+- Quick fix of a few bugs detected (data updates too slow for first-time user - too many requests were made. Solved by restructuring the code into using JavaScript Promises)
+- Deploy the updates in the past 2 weeks to live server (old accounts all deleted).
+- Recruited 5
