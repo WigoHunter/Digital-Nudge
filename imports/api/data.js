@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 
+const fs = require("fs");
 const STUDY = "STUDY";
 const CAREER = "CAREER";
 const CLASS = "CLASS";
@@ -85,6 +86,20 @@ export const getAllCalendarData = days => {
 				for (const key in mapIntentToWords) {
 					console.log(`${key}: ${mapIntentToWords[key].length} events`);
 				}
+
+				console.log("tranforming into JSON...");
+
+				fs.writeFile(
+					`${process.env.PWD}/public/intents.json`,
+					JSON.stringify(mapIntentToWords),
+					"utf8",
+					err => {
+						if (err) {
+							throw(err);
+						}
+
+						console.log("*** data transformed to JSON!");
+					});
 			})
 			.catch(e => {
 				console.log(e);

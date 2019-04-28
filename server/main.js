@@ -14,7 +14,10 @@ import seedConfig from "../nudge-config";
 // import { sendEmail } from "../imports/api/email";
 // import { t_suggestion } from "../imports/api/tests";
 // import { draw } from "../imports/api/utils";
-import { getAllCalendarData } from "../imports/api/data.js";
+
+// LUIS processing
+// import { getAllCalendarData } from "../imports/api/data.js";
+// import luis from "../imports/api/luis";
 
 Meteor.startup(() => {
 	// Seed Configuration
@@ -31,7 +34,10 @@ Meteor.startup(() => {
 	SyncedCron.start();
 
 	// Get all Calendar events for the past n days (all different categories).
-	getAllCalendarData(2 * 365);
+	// getAllCalendarData(2 * 365);
+
+	// Process and Upload to LUIS server
+	// luis();
 
 	// Test schedule jobs
 	// scheduleJobs();
