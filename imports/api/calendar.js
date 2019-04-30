@@ -136,6 +136,16 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (r
 			earliest: null,
 			latest: null,
 			longest: null,
+			/*
+			stats: {
+				averageEventStartTime: ,
+				averageEventStartTimeEachDay: ,
+				// mid
+				// mid
+				numberOfEventsAfter5pm: ,
+				numberOfEvnetsPre5pm:
+			}
+			*/
 			timezone: jstz.determine().name(),
 		};
 
