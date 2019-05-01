@@ -3,7 +3,7 @@ import intents from "../../../public/intents";
 
 // Push to LUIS server
 // import addIntents from "./addIntents";
-import addExamples from "./addExamples";
+// import addExamples from "./addExamples";
 
 const { key, id, version } = config.luis;
 
@@ -16,6 +16,7 @@ const addIntentsConfig = {
 	uri: `https://westus.api.cognitive.microsoft.com/luis/api/v2.0/apps/${id}/versions/${version}/intents`
 };
 
+// eslint-disable-next-line no-unused-vars
 const addExamplesConfig = {
 	LUIS_subscriptionKey: key,
 	LUIS_appId: id,
@@ -27,7 +28,7 @@ const addExamplesConfig = {
 
 export default (() => {
 	// addIntents(addIntentsConfig);
-	addExamples(addExamplesConfig);
+	// addExamples(addExamplesConfig);
 
 	/*
 	I20190428-15:44:43.812(-4)? STUDY: 330
