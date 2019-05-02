@@ -23,6 +23,25 @@ export const analyze = (profile, config) => ({
 	userType: findType(profile, config)
 });
 
+export const isDifferentDay = (prev, cur) => {
+	return (!(prev.getFullYear() == cur.getFullYear() && prev.getMonth() == cur.getMonth() &&
+		prev.getDate() == cur.getDate()));
+};
+
+export const getClockTime = (rawTime) => {
+	let hour = Math.floor(rawTime);
+	let minute = 60 * (rawTime - hour);
+	let t = new Date(2000, 0, 1);
+	t.setHours(hour);
+	t.setMinutes(minute);
+	return t;
+};
+
+export const getRawTime = (cur) => {
+	const curHour = cur.getHours();
+	const curMinutes = cur.getMinutes();
+	return (curHour + curMinutes / 60);
+};
 
 export const isEarlier = (prev, cur) => {
 	const prevHour = prev.getHours();
@@ -47,7 +66,7 @@ export const isLonger = (prev, cur) => {
 		(new Date(prev.end.dateTime).getTime() - new Date(prev.start.dateTime).getTime());
 };
 
-export const getNextTime = (time, justCheckDate=false) => {
+export const getNextTime = (time, justCheckDate = false) => {
 	if (justCheckDate && time.getTime() < new Date().getTime()) {
 		time.setDate(time.getDate() + 1);
 		return time;
@@ -76,23 +95,23 @@ export const fromUTCToLocal = (time, timezone) => {
 export const mostActive = counts => {
 	const dates = counts || [];
 
-	switch(dates.indexOf(Math.max(...dates))) {
-	case 0:
-		return "Sunday";
-	case 1:
-		return "Monday";
-	case 2:
-		return "Tuesday";
-	case 3:
-		return "Wednesday";
-	case 4:
-		return "Thursday";
-	case 5:
-		return "Friday";
-	case 6:
-		return "Saturday";
-	default:
-		return null;
+	switch (dates.indexOf(Math.max(...dates))) {
+		case 0:
+			return "Sunday";
+		case 1:
+			return "Monday";
+		case 2:
+			return "Tuesday";
+		case 3:
+			return "Wednesday";
+		case 4:
+			return "Thursday";
+		case 5:
+			return "Friday";
+		case 6:
+			return "Saturday";
+		default:
+			return null;
 	}
 };
 
@@ -128,7 +147,7 @@ export const reverse = (busy, min, max) => {
 
 export const calcEventsSpan = (events) => {
 	let span = 0;
-	for (let i=0; i<events.length; i++){
+	for (let i = 0; i < events.length; i++) {
 		let startTime = moment(events[i].start.dateTime);
 		let endTime = moment(events[i].end.dateTime);
 		let duration = moment.duration(endTime.diff(startTime));

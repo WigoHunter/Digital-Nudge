@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import jstz from "jstz";
 import { sendEmail } from "./email";
-import { calcEventsSpan, analyze, isEarlier, isLater, isLonger, trimEvents, reverse, fromLocalToUTC, callWithPromise } from "./utils";
+import { getRawTime, isDifferentDay, getClockTime, calcEventsSpan, analyze, isEarlier, isLater, isLonger, trimEvents, reverse, fromLocalToUTC, callWithPromise } from "./utils";
 import { Config } from "../db/configs";
 
 export const loadBuzytime = (user, min, max) => new Promise((resolve, reject) => {
@@ -22,10 +22,10 @@ export const loadBuzytime = (user, min, max) => new Promise((resolve, reject) =>
 });
 
 // Server environment - UTC time
-export const processEvents = async (events, user=Meteor.user(), config=Config.findOne(), send=true) => {
+export const processEvents = async (events, user = Meteor.user(), config = Config.findOne(), send = true) => {
 	if (events && events.items && config) {
 		// Initialize variables
-		events = trimEvents(events.items);		
+		events = trimEvents(events.items);
 		const span = calcEventsSpan(events);
 		const newUser = user.newUser;
 		const profile = user.nudgeProfile;
@@ -72,7 +72,7 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		});
 
 		const interval = new Date(time.end).getTime() - new Date(time.start).getTime();
-		
+
 		// Null if it's less than 1 hour
 		time = interval < 1000 * 60 * 60 ? null : time;
 
@@ -88,11 +88,11 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 		if (lastSuggestion != null) {
 			const start = new Date(lastSuggestion.start || "");
 			const end = new Date(lastSuggestion.end || "");
-			const event = events.find(e => 
+			const event = events.find(e =>
 				new Date(e.start.dateTime).getHours() == start.getHours()
-					&& new Date(e.start.dateTime).getMinutes() == start.getMinutes()
-					&& new Date(e.end.dateTime).getHours() == end.getHours()
-					&& new Date(e.end.dateTime).getMinutes() == end.getMinutes()
+				&& new Date(e.start.dateTime).getMinutes() == start.getMinutes()
+				&& new Date(e.end.dateTime).getHours() == end.getHours()
+				&& new Date(e.end.dateTime).getMinutes() == end.getMinutes()
 			);
 
 			if (event) {
@@ -104,21 +104,21 @@ export const processEvents = async (events, user=Meteor.user(), config=Config.fi
 			const target = await callWithPromise("getFullUser", user._id);
 			sendEmail(suggestion, target);
 		}
-	
+
 		console.log(`----- Suggestion built up for ${user.services.google.name} -----`);
 		console.log(suggestion);
 		console.log(`----- End of Suggestion built up for ${user.services.google.name} -----`);
 		Meteor.call("updateLastSuggestion", user._id, suggestion.time);
 		return suggestion;
 	}
-	
+
 	return null;
 };
 
 // Browser environment - local time applies to the Date Time.
 export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (resolve, reject) => {
 	const config = await callWithPromise("getConfig");
-	
+
 	GoogleApi.get("/calendar/v3/calendars/primary/events", {
 		params: {
 			timeMax: new Date().toISOString(),
@@ -136,18 +136,20 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (r
 			earliest: null,
 			latest: null,
 			longest: null,
-			/*
-			stats: {
-				averageEventStartTime: ,
-				averageEventStartTimeEachDay: ,
-				// mid
-				// mid
-				numberOfEventsAfter5pm: ,
-				numberOfEvnetsPre5pm:
-			}
-			*/
+			stat: {
+				avgStartTimeOfAll: null,
+				avgStartTimeOfDailyEarliest: null,
+				daysWithEvents: 0,
+				midStartTimeOfAll: null,
+				midStartTimeOfDailyEarliest: null,
+				numberOfEventsAfter5pm: 0,
+				numberOfEventsBefore5pm: 0,
+			},
 			timezone: jstz.determine().name(),
 		};
+		let prev = null;
+		let startTimes = [];
+		let startTimesOfDailyEarliest = [];
 
 		events = trimEvents(events);
 		events.forEach(e => {
@@ -156,6 +158,7 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (r
 				const curEnd = new Date(e.end.dateTime);
 				profile.countsOnDays[curStart.getDay()]++;
 				profile.counts++;
+				startTimes.push(getRawTime(curStart));
 
 				if (profile.earliest == null || isEarlier(new Date(profile.earliest.start.dateTime), curStart)) {
 					profile.earliest = e;
@@ -168,12 +171,30 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (r
 				if (profile.longest == null || isLonger(profile.longest, e)) {
 					profile.longest = e;
 				}
-			} catch(error) {
+
+				if (prev == null || isDifferentDay(new Date(prev.start.dateTime), curStart)) {
+					startTimesOfDailyEarliest.push(getRawTime(curStart));
+					profile.stat.daysWithEvents += 1;
+				}
+
+				prev = e;
+			} catch (error) {
 				console.log(error);
 				return;
 			}
 		});
 
+		// stat.* are all Date objects, in which only hour and minute are meaningful
+		if (profile.counts) {
+			startTimes.sort(function (a, b) { return a - b });
+			startTimesOfDailyEarliest.sort(function (a, b) { return a - b });
+			profile.stat.avgStartTimeOfAll = getClockTime(startTimes.reduce((total, num) => { return total + num; }) / startTimes.length);
+			profile.stat.avgStartTimeOfDailyEarliest = getClockTime(startTimesOfDailyEarliest.reduce((total, num) => { return total + num; }) / startTimesOfDailyEarliest.length);
+			profile.stat.midStartTimeOfAll = getClockTime(startTimes[Math.floor(startTimes.length / 2)]);
+			profile.stat.midStartTimeOfDailyEarliest = getClockTime(startTimesOfDailyEarliest[Math.floor(startTimesOfDailyEarliest.length / 2)]);
+			profile.stat.numberOfEventsBefore5pm = startTimes.filter((t) => { return (t < 17) }).length;
+			profile.stat.numberOfEventsAfter5pm = profile.counts - profile.stat.numberOfEventsBefore5pm;
+		}
 		profile = analyze(profile, config);
 
 		Meteor.call("updateProfile", id, profile, (err, res) => {
@@ -201,16 +222,16 @@ export const trackPastWeekEventSpan = user => new Promise((resolve, reject) => {
 		let events = res.items || [];
 		events = trimEvents(events);
 		let timestamps = [];
-		for (let i = 0; i < events.length; i++){
+		for (let i = 0; i < events.length; i++) {
 			timestamps.push({
-				startTime : moment(events[i].start.dateTime),
-				duration : moment.duration(moment(events[i].end.dateTime).diff(
+				startTime: moment(events[i].start.dateTime),
+				duration: moment.duration(moment(events[i].end.dateTime).diff(
 					moment(events[i].start.dateTime)))
 			});
 		}
 
-		timestamps.sort((a,b) => {
-			if (a.startTime.isBefore(b.startTime)){
+		timestamps.sort((a, b) => {
+			if (a.startTime.isBefore(b.startTime)) {
 				return 1;
 			}
 			return -1;
@@ -222,12 +243,12 @@ export const trackPastWeekEventSpan = user => new Promise((resolve, reject) => {
 		let idx = 0;
 		let spanForPastWeek = new Array(7).fill(0);
 
-		for (let i = 0; i < 7; i++){
+		for (let i = 0; i < 7; i++) {
 			let minutesCount = 0;
 			while (idx < timestamps.length) {
 				tmp = timestamps[idx].startTime;
-				
-				if (tmp.isBefore(currTime) && ydaTime.isBefore(tmp)){
+
+				if (tmp.isBefore(currTime) && ydaTime.isBefore(tmp)) {
 					console.log("count!");
 					minutesCount += timestamps[idx].duration.asMinutes();
 					idx += 1;
@@ -236,11 +257,11 @@ export const trackPastWeekEventSpan = user => new Promise((resolve, reject) => {
 				}
 			}
 
-			spanForPastWeek[6-i] = minutesCount / 60;
+			spanForPastWeek[6 - i] = minutesCount / 60;
 			currTime.subtract(1, "days");
 			ydaTime.subtract(1, "days");
 		}
-		
+
 		console.log(`----- ${user.services.google.name}'s hours for last week events -----`);
 		console.log(spanForPastWeek);
 		if (spanForPastWeek) {
