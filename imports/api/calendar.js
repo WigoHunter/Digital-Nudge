@@ -186,13 +186,13 @@ export const loadUserPastData = (id = Meteor.user()._id) => new Promise(async (r
 
 		// stat.* are all Date objects, in which only hour and minute are meaningful
 		if (profile.counts) {
-			startTimes.sort(function (a, b) { return a - b });
-			startTimesOfDailyEarliest.sort(function (a, b) { return a - b });
+			startTimes.sort((a, b) => a - b);
+			startTimesOfDailyEarliest.sort((a, b) => a - b);
 			profile.stat.avgStartTimeOfAll = getClockTime(startTimes.reduce((total, num) => { return total + num; }) / startTimes.length);
 			profile.stat.avgStartTimeOfDailyEarliest = getClockTime(startTimesOfDailyEarliest.reduce((total, num) => { return total + num; }) / startTimesOfDailyEarliest.length);
 			profile.stat.midStartTimeOfAll = getClockTime(startTimes[Math.floor(startTimes.length / 2)]);
 			profile.stat.midStartTimeOfDailyEarliest = getClockTime(startTimesOfDailyEarliest[Math.floor(startTimesOfDailyEarliest.length / 2)]);
-			profile.stat.numberOfEventsBefore5pm = startTimes.filter((t) => { return (t < 17) }).length;
+			profile.stat.numberOfEventsBefore5pm = startTimes.filter((t) => { return (t < 17); }).length;
 			profile.stat.numberOfEventsAfter5pm = profile.counts - profile.stat.numberOfEventsBefore5pm;
 		}
 		profile = analyze(profile, config);
