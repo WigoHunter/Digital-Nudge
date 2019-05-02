@@ -96,22 +96,22 @@ export const mostActive = counts => {
 	const dates = counts || [];
 
 	switch (dates.indexOf(Math.max(...dates))) {
-		case 0:
-			return "Sunday";
-		case 1:
-			return "Monday";
-		case 2:
-			return "Tuesday";
-		case 3:
-			return "Wednesday";
-		case 4:
-			return "Thursday";
-		case 5:
-			return "Friday";
-		case 6:
-			return "Saturday";
-		default:
-			return null;
+	case 0:
+		return "Sunday";
+	case 1:
+		return "Monday";
+	case 2:
+		return "Tuesday";
+	case 3:
+		return "Wednesday";
+	case 4:
+		return "Thursday";
+	case 5:
+		return "Friday";
+	case 6:
+		return "Saturday";
+	default:
+		return null;
 	}
 };
 
