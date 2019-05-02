@@ -18,6 +18,7 @@
     "googleapis": "^37.1.0",
     "jsdom": "^14.0.0",
     "jstz": "^2.1.1",
+    "meetup-api": "^1.4.38",
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",

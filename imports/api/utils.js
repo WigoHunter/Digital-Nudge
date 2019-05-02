@@ -147,4 +147,24 @@ export const callWithPromise = (method, ...params) => new Promise((resolve, reje
 	});
 });
 
+export const promisesInSequence = promises => {
+	let results = [];
+	return promises.reduce((prev, next) => {
+		return prev.then(() => {
+			return next.then(res => {
+				results.push(res);
+			});
+		});
+	}, Promise.resolve())
+		.then(() => {
+			return results;
+		});
+};
+
+/*
+export const promisesInSequence = promises => {
+	return promises.reduce((prev, cur) => prev.then(cur), Promise.resolve());
+};
+*/
+
 export const average = list => list.reduce((prev, curr) => prev + curr, 0) / list.length;

@@ -1,3 +1,5 @@
+import { promisesInSequence } from "../utils";
+
 const request = require("requestretry");
 const delayMS = 1000;
 const maxRetry = 5;
@@ -53,11 +55,17 @@ const addIntents = async config => {
 		}
 	}, this);
 
-	let res = await Promise.all(promises);
-	console.log("*** Done uploading intents ***");
-	res.forEach(response => {
-		console.log(response);
-	});
+	promisesInSequence(promises)
+		.then(res => {
+			console.log("*** Done uploading intents ***");
+			res.forEach(response => {
+				console.log(response);
+			});
+		});
+
+	// res.forEach(response => {
+	// 	console.log(response);
+	// });
 };
 
 export default addIntents;

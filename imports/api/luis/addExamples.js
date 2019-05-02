@@ -1,3 +1,4 @@
+import { promisesInSequence } from "../utils";
 import { retry } from "./addIntents";
 
 const request = require("requestretry");
@@ -35,10 +36,12 @@ const addExamples = async config => {
 			promises.push(pagePromise);
 		});
 
-		const res = await Promise.all(promises);
-		res.forEach(response => {
-			console.log(response);
-		});
+		promisesInSequence(promises)
+			.then(res => {
+				res.forEach(response => {
+					console.log(response);
+				});
+			});
 	} catch (err) {
 		console.log(err);
 	}

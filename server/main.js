@@ -16,7 +16,7 @@ import seedConfig from "../nudge-config";
 // import { draw } from "../imports/api/utils";
 
 // LUIS processing
-// import { getAllCalendarData } from "../imports/api/data.js";
+// import { getAllCalendarData } from "../imports/api/luis/data.js";
 // import luis from "../imports/api/luis";
 
 Meteor.startup(() => {
