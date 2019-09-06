@@ -1,189 +1,248 @@
 import { Meteor } from "meteor/meteor";
+import { luisEndpoints } from "../../keys";
 
 const findUsageType = (profile, config) => {
-	const userUsageTypes = config.userUsageTypes;
-	const usages = Object.keys(userUsageTypes).sort((a, b) => userUsageTypes[b] - userUsageTypes[a]);
-	for (let usage of usages) {
-		if (profile.counts >= userUsageTypes[usage]) {
-			return usage;
-		}
-	}
+  const userUsageTypes = config.userUsageTypes;
+  const usages = Object.keys(userUsageTypes).sort(
+    (a, b) => userUsageTypes[b] - userUsageTypes[a]
+  );
+  for (let usage of usages) {
+    if (profile.counts >= userUsageTypes[usage]) {
+      return usage;
+    }
+  }
 
-	return "none";
+  return "none";
 };
 
 const findType = (profile, config) => ({
-	late: profile.latest == null ? false : new Date(profile.latest.end.dateTime).getHours() >= config.userTypes.late,
-	early: profile.earliest == null ? false : new Date(profile.earliest.start.dateTime).getHours() < config.userTypes.early
+  late:
+    profile.latest == null
+      ? false
+      : new Date(profile.latest.end.dateTime).getHours() >=
+        config.userTypes.late,
+  early:
+    profile.earliest == null
+      ? false
+      : new Date(profile.earliest.start.dateTime).getHours() <
+        config.userTypes.early
 });
 
 export const analyze = (profile, config) => ({
-	...profile,
-	userUsageType: findUsageType(profile, config),
-	userType: findType(profile, config)
+  ...profile,
+  userUsageType: findUsageType(profile, config),
+  userType: findType(profile, config)
 });
 
 export const isDifferentDay = (prev, cur) => {
-	return (!(prev.getFullYear() == cur.getFullYear() && prev.getMonth() == cur.getMonth() &&
-		prev.getDate() == cur.getDate()));
+  return !(
+    prev.getFullYear() == cur.getFullYear() &&
+    prev.getMonth() == cur.getMonth() &&
+    prev.getDate() == cur.getDate()
+  );
 };
 
-export const getClockTime = (rawTime) => {
-	let hour = Math.floor(rawTime);
-	let minute = 60 * (rawTime - hour);
-	let t = new Date(2000, 0, 1);
-	t.setHours(hour);
-	t.setMinutes(minute);
-	return t;
+export const getClockTime = rawTime => {
+  let hour = Math.floor(rawTime);
+  let minute = 60 * (rawTime - hour);
+  let t = new Date(2000, 0, 1);
+  t.setHours(hour);
+  t.setMinutes(minute);
+  return t;
 };
 
-export const getRawTime = (cur) => {
-	const curHour = cur.getHours();
-	const curMinutes = cur.getMinutes();
-	return (curHour + curMinutes / 60);
+export const getRawTime = cur => {
+  const curHour = cur.getHours();
+  const curMinutes = cur.getMinutes();
+  return curHour + curMinutes / 60;
 };
 
 export const isEarlier = (prev, cur) => {
-	const prevHour = prev.getHours();
-	const prevMinutes = prev.getMinutes();
-	const curHour = cur.getHours();
-	const curMinutes = cur.getMinutes();
+  const prevHour = prev.getHours();
+  const prevMinutes = prev.getMinutes();
+  const curHour = cur.getHours();
+  const curMinutes = cur.getMinutes();
 
-	return (curHour < prevHour || (curHour == prevHour && curMinutes < prevMinutes));
+  return (
+    curHour < prevHour || (curHour == prevHour && curMinutes < prevMinutes)
+  );
 };
 
 export const isLater = (prev, cur) => {
-	const prevHour = prev.getHours();
-	const prevMinutes = prev.getMinutes();
-	const curHour = cur.getHours();
-	const curMinutes = cur.getMinutes();
+  const prevHour = prev.getHours();
+  const prevMinutes = prev.getMinutes();
+  const curHour = cur.getHours();
+  const curMinutes = cur.getMinutes();
 
-	return (curHour > prevHour || (curHour == prevHour && curMinutes > prevMinutes));
+  return (
+    curHour > prevHour || (curHour == prevHour && curMinutes > prevMinutes)
+  );
 };
 
 export const isLonger = (prev, cur) => {
-	return (new Date(cur.end.dateTime).getTime() - new Date(cur.start.dateTime).getTime()) >
-		(new Date(prev.end.dateTime).getTime() - new Date(prev.start.dateTime).getTime());
+  return (
+    new Date(cur.end.dateTime).getTime() -
+      new Date(cur.start.dateTime).getTime() >
+    new Date(prev.end.dateTime).getTime() -
+      new Date(prev.start.dateTime).getTime()
+  );
 };
 
 export const getNextTime = (time, justCheckDate = false) => {
-	if (justCheckDate && time.getTime() < new Date().getTime()) {
-		time.setDate(time.getDate() + 1);
-		return time;
-	}
+  if (justCheckDate && time.getTime() < new Date().getTime()) {
+    time.setDate(time.getDate() + 1);
+    return time;
+  }
 
-	let nextScheduledTime = new Date();
-	nextScheduledTime.setHours(time.getUTCHours());
-	nextScheduledTime.setMinutes(time.getMinutes());
-	if (nextScheduledTime.getTime() < new Date().getTime()) {
-		nextScheduledTime.setDate(nextScheduledTime.getDate() + 1);
-	}
+  let nextScheduledTime = new Date();
+  nextScheduledTime.setHours(time.getUTCHours());
+  nextScheduledTime.setMinutes(time.getMinutes());
+  if (nextScheduledTime.getTime() < new Date().getTime()) {
+    nextScheduledTime.setDate(nextScheduledTime.getDate() + 1);
+  }
 
-	return nextScheduledTime;
+  return nextScheduledTime;
 };
 
 // return moment object
 export const fromLocalToUTC = (time, timezone) => {
-	return moment.tz(time, "HH:mm", timezone).utc();
+  return moment.tz(time, "HH:mm", timezone).utc();
 };
 
 // return moment object
 export const fromUTCToLocal = (time, timezone) => {
-	return moment(time, "HH:mm").tz(timezone);
+  return moment(time, "HH:mm").tz(timezone);
 };
 
 export const mostActive = counts => {
-	const dates = counts || [];
+  const dates = counts || [];
 
-	switch (dates.indexOf(Math.max(...dates))) {
-	case 0:
-		return "Sunday";
-	case 1:
-		return "Monday";
-	case 2:
-		return "Tuesday";
-	case 3:
-		return "Wednesday";
-	case 4:
-		return "Thursday";
-	case 5:
-		return "Friday";
-	case 6:
-		return "Saturday";
-	default:
-		return null;
-	}
+  switch (dates.indexOf(Math.max(...dates))) {
+    case 0:
+      return "Sunday";
+    case 1:
+      return "Monday";
+    case 2:
+      return "Tuesday";
+    case 3:
+      return "Wednesday";
+    case 4:
+      return "Thursday";
+    case 5:
+      return "Friday";
+    case 6:
+      return "Saturday";
+    default:
+      return null;
+  }
 };
 
-export const trimEvents = events => events
-	.filter(e => (e.status !== "cancelled" && e.start && e.start.dateTime && e.end && e.end.dateTime))
-	.map(e => ({
-		created: e.created,
-		end: e.end,
-		start: e.start,
-		summary: e.summary
-	}));
+export const trimEvents = events =>
+  events
+    .filter(
+      e =>
+        e.status !== "cancelled" &&
+        e.start &&
+        e.start.dateTime &&
+        e.end &&
+        e.end.dateTime
+    )
+    .map(e => ({
+      created: e.created,
+      end: e.end,
+      start: e.start,
+      summary: e.summary
+    }));
 
 export const reverse = (busy, min, max) => {
-	let res = [];
-	let start = min;
+  let res = [];
+  let start = min;
 
-	busy.forEach(time => {
-		res.push({
-			start,
-			end: time.start
-		});
+  busy.forEach(time => {
+    res.push({
+      start,
+      end: time.start
+    });
 
-		start = time.end;
-	});
+    start = time.end;
+  });
 
-	res.push({
-		start,
-		end: max
-	});
+  res.push({
+    start,
+    end: max
+  });
 
-	return res;
+  return res;
 };
 
-export const calcEventsSpan = (events) => {
-	let span = 0;
-	for (let i = 0; i < events.length; i++) {
-		let startTime = moment(events[i].start.dateTime);
-		let endTime = moment(events[i].end.dateTime);
-		let duration = moment.duration(endTime.diff(startTime));
-		span += duration.asMinutes();
-	}
-	return span / 60;
+export const calcEventsSpan = events => {
+  let span = 0;
+  for (let i = 0; i < events.length; i++) {
+    let startTime = moment(events[i].start.dateTime);
+    let endTime = moment(events[i].end.dateTime);
+    let duration = moment.duration(endTime.diff(startTime));
+    span += duration.asMinutes();
+  }
+  return span / 60;
 };
 
-export const callWithPromise = (method, ...params) => new Promise((resolve, reject) => {
-	Meteor.call(method, ...params, (err, res) => {
-		if (err) {
-			reject(err);
-		}
+export const callWithPromise = (method, ...params) =>
+  new Promise((resolve, reject) => {
+    Meteor.call(method, ...params, (err, res) => {
+      if (err) {
+        reject(err);
+      }
 
-		resolve(res);
-	});
-});
+      resolve(res);
+    });
+  });
 
 export const promisesInSequence = promises => {
-	let results = [];
-	return promises.reduce((prev, next) => {
-		return prev.then(() => {
-			return next.then(res => {
-				results.push(res);
-			});
-		});
-	}, Promise.resolve())
-		.then(() => {
-			return results;
-		});
+  let results = [];
+  return promises
+    .reduce((prev, next) => {
+      return prev.then(() => {
+        return next.then(res => {
+          results.push(res);
+        });
+      });
+    }, Promise.resolve())
+    .then(() => {
+      return results;
+    });
 };
 
-/*
-export const promisesInSequence = promises => {
-	return promises.reduce((prev, cur) => prev.then(cur), Promise.resolve());
-};
-*/
+export const getCategory = event =>
+  new Promise((resolve, reject) => {
+    fetch(`${luisEndpoints.category}${event}`)
+      .then(res => res.json())
+      .then(res => {
+        resolve(
+          res.topScoringIntent && res.topScoringIntent.score > 0.3
+            ? res.topScoringIntent.intent
+            : "None"
+        );
+      })
+      .catch(() => {
+        reject("");
+      });
+  });
 
-export const average = list => list.reduce((prev, curr) => prev + curr, 0) / list.length;
+export const getTopic = event =>
+  new Promise((resolve, reject) => {
+    fetch(`${luisEndpoints.topic}${event}`)
+      .then(res => res.json())
+      .then(res => {
+        resolve(
+          res.topScoringIntent && res.topScoringIntent.score > 0.3
+            ? res.topScoringIntent.intent
+            : "None"
+        );
+      })
+      .catch(() => {
+        reject("");
+      });
+  });
+
+export const average = list =>
+  list.reduce((prev, curr) => prev + curr, 0) / list.length;

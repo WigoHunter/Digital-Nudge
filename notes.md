@@ -30,3 +30,13 @@ Health Keep for Apple
 - Quick fix of a few bugs detected (data updates too slow for first-time user - too many requests were made. Solved by restructuring the code into using JavaScript Promises)
 - Deploy the updates in the past 2 weeks to live server (old accounts all deleted).
 - Recruited 5
+
+
+
+Get a set of users to test different models from different models to see if the interest we predict makes sense.
+- Less accurate v.s. not useful
+
+- 10%~ of randomness
+- randomization in time
+- Timeful app report
+- no fixed time for events! Potentially do it this way, just suggest event without time.

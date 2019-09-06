@@ -18,36 +18,45 @@ import seedConfig from "../nudge-config";
 // LUIS processing
 // import { getAllCalendarData } from "../imports/api/luis/data.js";
 // import luis from "../imports/api/luis";
+// import { getCategory } from "../imports/api/utils";
 
 Meteor.startup(() => {
-	// Seed Configuration
-	process.env.MAIL_URL = keys.sendGrid.server;
-	Meteor.http = HTTP;
-	const config = Config.findOne();
+  // Seed Configuration
+  process.env.MAIL_URL = keys.sendGrid.server;
+  Meteor.http = HTTP;
+  const config = Config.findOne();
 
-	if (!config) {
-		console.log("Seeding configuration...");
-		Config.insert(seedConfig);
-	}
+  if (!config) {
+    console.log("Seeding configuration...");
+    Config.insert(seedConfig);
+  }
 
-	// Start schedules
-	SyncedCron.start();
+  // Expose fetch to server
+  // if (typeof fetch !== "function") {
+  // 	global.fetch = require("node-fetch-polyfill");
+  // }
 
-	// Get all Calendar events for the past n days (all different categories).
-	// getAllCalendarData(2 * 365);
+  // Start schedules
+  SyncedCron.start();
 
-	// Process and Upload to LUIS server
-	// luis();
+  // Get all Calendar events for the past n days (all different categories).
+  // getAllCalendarData(2 * 365);
 
-	// Test schedule jobs
-	// scheduleJobs();
+  // Process and Upload to LUIS server
+  // luis();
 
-	// Test drawing the chart
-	// const svg = draw(Meteor.users.findOne());
-	// console.log(svg);
+  // Test schedule jobs
+  // scheduleJobs();
 
-	// Test suggestion
-	// Meteor.users.find().fetch().forEach(user => {
-	// 	t_suggestion(user, (config || seedConfig), true);
-	// });
+  // Test drawing the chart
+  // const svg = draw(Meteor.users.findOne());
+  // console.log(svg);
+
+  // Test suggestion
+  // Meteor.users.find().fetch().forEach(user => {
+  // 	t_suggestion(user, (config || seedConfig), true);
+  // });
+
+  // Test LUIS
+  // getCategory("Lunch with Jack").then(res => console.log(res));
 });
