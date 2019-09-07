@@ -16,18 +16,18 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(appReducer, composeEnhancers(applyMiddleware(thunk)));
 
 Meteor.startup(() => {
-	Tracker.autorun(() => {
-		Meteor.subscribe("userData", () => {
-			console.log(Meteor.users.findOne());
-		});
-	});
+  Tracker.autorun(() => {
+    Meteor.subscribe("userData", () => {
+      console.log(Meteor.users.findOne());
+    });
+  });
 
-	store.dispatch(loadUser());
+  store.dispatch(loadUser());
 
-	render(
-		<Provider store={store}>
-			<App />
-		</Provider>,
-		window.document.getElementById("react-root")
-	);
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    window.document.getElementById("react-root")
+  );
 });
