@@ -3,7 +3,7 @@ import { HTTP } from "meteor/http";
 import { Config } from "../imports/db/configs";
 import "../imports/api/publish";
 import "../imports/api/auth";
-import "../imports/api/calendar";
+import "../imports/api/methods";
 import "../imports/api/email";
 import "../imports/api/scheduledJob";
 import keys from "../keys";
