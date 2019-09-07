@@ -64,7 +64,7 @@ export const scheduleJobs = async () => {
         ? withDefault(profile, config)
         : withProfile(profile, config);
 
-    // TODO: Ignore on the configured days - turn off for testing
+    // TODO: Ignore on the configured days - ignore this for testing
 
     // Logs
     console.log(`scheduling user ${user.services.google.name}'s email at:`);
