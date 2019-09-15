@@ -63,7 +63,84 @@ class Login extends React.Component {
             <button onClick={() => this.login()}>Login to Subscribe</button>
           </div>
         </div>
-        <div className="info"></div>
+
+        <div className="info">
+          <h3>How This Works</h3>
+          <div>
+            <span>1</span>
+            <p>Sign-up by clicking {"Login to Subscribe"} above.</p>
+          </div>
+          <div>
+            <span>2</span>
+            <p>
+              Give us permission to <span>read</span> your calendar data.
+            </p>
+          </div>
+          <div>
+            <span>3</span>
+            <p>Tell us what you would like to work on.</p>
+          </div>
+          <div>
+            <span>4</span>
+            <p>
+              <span>
+                Start receiving personalized nudges to boost your productivity.
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <div className="people">
+          <h3>People behind this project</h3>
+          <div className="members">
+            <div className="member">
+              <div
+                style={{
+                  background:
+                    "url(https://scontent-lga3-1.xx.fbcdn.net/v/t1.0-9/65115788_336047317335172_9082315466789093376_n.jpg?_nc_cat=103&_nc_oc=AQmEZVesAeeWQBdeG8ULdJCEna7cK8wjQXcZCv52FJpjVm3unl_-vrS87DPp1HA1gPI&_nc_ht=scontent-lga3-1.xx&oh=d6df12b99c5f7c5e347dcb84ac25019f&oe=5E084F9A)",
+                  backgroundSize: "cover"
+                }}
+              ></div>
+              <h4>Bowen Zhang</h4>
+              <p>Master Student</p>
+            </div>
+            <div className="member">
+              <div
+                style={{
+                  background:
+                    "url(https://scontent-lga3-1.xx.fbcdn.net/v/t1.0-9/17155307_10211067554639097_6739106460818295766_n.jpg?_nc_cat=101&_nc_oc=AQmRjCW7YeioDyp5MKEUlnjqVFLCNRSVanLgkThuf3CTPpWMUvbHcN7d2atqZh5qlEM&_nc_ht=scontent-lga3-1.xx&oh=0e5e09ba3b0fc6e7e9d9025ad6c1fa43&oe=5DFB3F6C)",
+                  backgroundSize: "cover"
+                }}
+              ></div>
+              <h4>Kevin Hsu</h4>
+              <p>Master Student</p>
+            </div>
+            <div className="member">
+              <div
+                style={{
+                  background: "url(https://smalldata.io/img/team/Michael.png)",
+                  backgroundSize: "cover"
+                }}
+              ></div>
+              <h4>Michael Sobolev</h4>
+              <p>Advisor</p>
+            </div>
+            <div className="member">
+              <div
+                style={{
+                  background: "url(https://smalldata.io/img/team/fabian.png)",
+                  backgroundSize: "cover"
+                }}
+              ></div>
+              <h4>Fabian Okeke</h4>
+              <p>Advisor</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="footer">
+          <p>Made for Specialization Project at Cornell Tech</p>
+        </div>
       </>
     );
   }
