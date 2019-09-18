@@ -56,6 +56,7 @@ const loadUserPastData = (id = Meteor.user()._id) =>
         let topics = {};
         let categoriesPromises = [];
         let topicsPromises = [];
+        let sendTime = null;
 
         events = trimEvents(events);
         events.forEach(e => {
@@ -80,6 +81,7 @@ const loadUserPastData = (id = Meteor.user()._id) =>
               isEarlier(new Date(profile.earliest.start.dateTime), curStart)
             ) {
               profile.earliest = e;
+              sendTime = profile.earliest.start.dateTime;
             }
 
             if (
@@ -160,7 +162,8 @@ const loadUserPastData = (id = Meteor.user()._id) =>
         profile = {
           ...analyze(profile, config),
           topics,
-          categories
+          categories,
+          sendTime
         };
 
         Meteor.call("updateProfile", id, profile, (err, res) => {

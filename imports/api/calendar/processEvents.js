@@ -111,9 +111,10 @@ const processEvents = async (
     }
 
     suggestion.time = time;
+    suggestion.title = profile.goal;
 
     // Get yesterday's planned event, for next suggestion.
-    if (lastSuggestion != null) {
+    if (suggestion.title === "" && lastSuggestion != null) {
       const start = new Date(lastSuggestion.start || "");
       const end = new Date(lastSuggestion.end || "");
       const event = events.find(
@@ -142,6 +143,7 @@ const processEvents = async (
       `----- End of Suggestion built up for ${user.services.google.name} -----`
     );
     Meteor.call("updateLastSuggestion", user._id, suggestion.time);
+    Meteor.call("insertSuggestion", user._id, suggestion);
     return suggestion;
   }
 

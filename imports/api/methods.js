@@ -2,6 +2,28 @@ import { Meteor } from "meteor/meteor";
 import { Config } from "../db/configs";
 
 Meteor.methods({
+  updateGoal(id, goal) {
+    Meteor.users.update(
+      { _id: id },
+      {
+        $set: {
+          "nudgeProfile.goal": goal
+        }
+      }
+    );
+  },
+
+  updateSendTime(id, sendTime) {
+    Meteor.users.update(
+      { _id: id },
+      {
+        $set: {
+          "nudgeProfile.sendTime": sendTime
+        }
+      }
+    );
+  },
+
   getConfig() {
     return Config.findOne();
   },
@@ -39,6 +61,24 @@ Meteor.methods({
       {
         $set: {
           lastSuggestion: time
+        }
+      }
+    );
+  },
+
+  insertSuggestion(id, suggestion) {
+    const user = Meteor.users.findOne({ _id: id });
+
+    const suggestions =
+      user != null && user.nudgeProfile != null
+        ? user.nudgeProfile.suggestionHistory || []
+        : [];
+
+    Meteor.users.update(
+      { _id: id },
+      {
+        $set: {
+          suggestionHistory: [...suggestions, suggestion]
         }
       }
     );

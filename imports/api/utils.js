@@ -246,3 +246,8 @@ export const getTopic = event =>
 
 export const average = list =>
   list.reduce((prev, curr) => prev + curr, 0) / list.length;
+
+export const formatTime = time =>
+  `${time.getHours() > 9 ? "" : "0"}${time.getHours()}:${
+    time.getMinutes() > 9 ? "" : "0"
+  }${time.getMinutes()}`;

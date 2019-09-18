@@ -16,6 +16,17 @@ if (Meteor.isServer) {
     );
   });
 
+  Meteor.publish("config.adjustableSendTime", function() {
+    return Config.find(
+      {},
+      {
+        fields: {
+          adjustableSendTime: 1
+        }
+      }
+    );
+  });
+
   Meteor.publish("config.usertype", function() {
     return Config.find(
       {},

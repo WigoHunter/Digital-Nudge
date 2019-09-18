@@ -1,17 +1,16 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
-import { mostActive } from "../api/utils";
+import { mostActive, formatTime } from "../api/utils";
 import { withTracker } from "meteor/react-meteor-data";
-// import { Config } from "../db/configs";
+import { Config } from "../db/configs";
 
 const formatMinutes = minutes =>
   `${minutes / 60 > 0 ? `${Math.floor(minutes / 60)} hour(s) ` : ""}${
     minutes % 60 > 0 ? `${minutes % 60} minute(s)` : ""
   }`;
 
-// const Report = ({ profile, loading, config }) => {
-const Report = ({ profile, loading }) => {
+const Report = ({ profile, loading, config }) => {
   if (loading) {
     return null;
   }
@@ -21,6 +20,12 @@ const Report = ({ profile, loading }) => {
     return null;
   }
 
+  const [goal, setGoal] = useState(profile.goal || "");
+  const [sendTime, setSendTime] = useState(
+    formatTime(new Date(profile.sendTime) || new Date())
+  );
+  const profileSendTime = new Date(profile.sendTime);
+  const formattedProfileSendTime = formatTime(profileSendTime);
   const earliest = new Date(profile.earliest.start.dateTime);
   const latest = new Date(profile.latest.end.dateTime);
   const longest = Math.round(
@@ -28,6 +33,28 @@ const Report = ({ profile, loading }) => {
       new Date(profile.longest.start.dateTime).getTime()) /
       60000
   );
+
+  const user = Meteor.user();
+  const { adjustableSendTime } = config;
+
+  const _updateGoal = e => {
+    e.preventDefault();
+    Meteor.call("updateGoal", user._id, goal);
+  };
+
+  const _updateSendTime = e => {
+    e.preventDefault();
+    const [hour, minute] = sendTime.split(":");
+
+    if (hour > 24 || hour < 0 || minute > 60 || minute < 0) {
+      alert("not a valid time!");
+      return;
+    }
+
+    profileSendTime.setHours(hour);
+    profileSendTime.setMinutes(minute);
+    Meteor.call("updateSendTime", user._id, profileSendTime);
+  };
 
   return (
     <div className="full-report">
@@ -39,28 +66,55 @@ const Report = ({ profile, loading }) => {
           } events planned and was most active on ${mostActive(
             profile.countsOnDays
           )}.`}</p>
-          <ul>
-            <li>
-              {`Earliest event: ${`${
-                earliest.getHours() < 10 ? "0" : ""
-              }${earliest.getHours()}`}:${`${
-                earliest.getMinutes() < 10 ? "0" : ""
-              }${earliest.getMinutes()}`}`}
-              <span>{profile.earliest.summary}</span>
-            </li>
-            <li>
-              {`Latest event: ${`${
-                latest.getHours() < 10 ? "0" : ""
-              }${latest.getHours()}`}:${`${
-                latest.getMinutes() < 10 ? "0" : ""
-              }${latest.getMinutes()}`}`}
-              <span>{profile.latest.summary}</span>
-            </li>
-            <li>
-              {`Longest event: ${formatMinutes(longest)}`}
-              <span>{profile.longest.summary}</span>
-            </li>
-          </ul>
+          {adjustableSendTime ? (
+            <div className="time-picker">
+              <h4>Productivity Nudges</h4>
+              <p className="sub">
+                Based on our analysis, we are planning to send you daily emails
+                for event suggestions at {formatTime(new Date(profileSendTime))}
+                . But feel free to tell us explicitly when you would like to
+                receive these emails!
+              </p>
+              <form
+                onSubmit={_updateSendTime}
+                disabled={formattedProfileSendTime === sendTime}
+              >
+                <input
+                  type="text"
+                  value={sendTime}
+                  onChange={e => setSendTime(e.target.value)}
+                />
+                <input
+                  type="submit"
+                  value="Submit"
+                  disabled={formattedProfileSendTime === sendTime}
+                />
+              </form>
+            </div>
+          ) : (
+            <ul>
+              <li>
+                {`Earliest event: ${`${
+                  earliest.getHours() < 10 ? "0" : ""
+                }${earliest.getHours()}`}:${`${
+                  earliest.getMinutes() < 10 ? "0" : ""
+                }${earliest.getMinutes()}`}`}
+                <span>{profile.earliest.summary}</span>
+              </li>
+              <li>
+                {`Latest event: ${`${
+                  latest.getHours() < 10 ? "0" : ""
+                }${latest.getHours()}`}:${`${
+                  latest.getMinutes() < 10 ? "0" : ""
+                }${latest.getMinutes()}`}`}
+                <span>{profile.latest.summary}</span>
+              </li>
+              <li>
+                {`Longest event: ${formatMinutes(longest)}`}
+                <span>{profile.longest.summary}</span>
+              </li>
+            </ul>
+          )}
 
           {/* <h3>Catogories</h3>
         <div className="tags">
@@ -93,10 +147,21 @@ const Report = ({ profile, loading }) => {
         <div className="action report-box">
           <h4>Tell Us Your Goal</h4>
           <p className="sub">
-            We use the data collected from you calendar to predict and suggest
-            the time you work on this goal on a daily basis.
+            In the daily email, we look for your free time on the day, predict
+            and suggest the best time you work on this goal in the day!
           </p>
-          <input type="text" />
+          <form onSubmit={_updateGoal} disabled={profile.goal === goal}>
+            <input
+              type="text"
+              value={goal}
+              onChange={e => setGoal(e.target.value)}
+            />
+            <input
+              type="submit"
+              value="Submit"
+              disabled={profile.goal === goal}
+            />
+          </form>
         </div>
       </div>
 
@@ -108,12 +173,12 @@ const Report = ({ profile, loading }) => {
 };
 
 export default withTracker(() => {
-  const sub = Meteor.subscribe("config.usertype");
+  const sub = Meteor.subscribe("config.adjustableSendTime");
   const loading = !sub.ready();
-  // const config = Config.findOne();
+  const config = Config.findOne();
 
   return {
-    loading
-    // config
+    loading,
+    config
   };
 })(Report);

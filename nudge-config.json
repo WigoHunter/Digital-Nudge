@@ -26,5 +26,6 @@
   "defaults": {
     "send": 9,
     "title": ""
-  }
+  },
+  "adjustableSendTime": true
 }

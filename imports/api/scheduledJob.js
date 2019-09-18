@@ -4,8 +4,8 @@ import { processEvents } from "./calendar";
 
 const withProfile = (profile, config) => {
   const timezone = profile.timezone || null;
-  const earliest = new Date(profile.earliest.start.dateTime);
-  let nextScheduledTime = getNextTime(earliest);
+  const sendTime = new Date(profile.sendTime);
+  let nextScheduledTime = getNextTime(sendTime);
 
   let utcHour = nextScheduledTime.getHours();
   const upperBound =
@@ -60,7 +60,7 @@ export const scheduleJobs = async () => {
       `----- Started Scheduling ${user.services.google.name}'s Service------`
     );
     const nextScheduledTime =
-      !profile || !profile.earliest
+      !profile || !profile.sendTime
         ? withDefault(profile, config)
         : withProfile(profile, config);
 
