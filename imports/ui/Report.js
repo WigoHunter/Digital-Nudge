@@ -36,6 +36,7 @@ const Report = ({ profile, loading, config }) => {
 
   const user = Meteor.user();
   const { adjustableSendTime } = config;
+  const history = profile.suggestionHistory || user.suggestionHistory || [];
 
   const _updateGoal = e => {
     e.preventDefault();
@@ -167,6 +168,29 @@ const Report = ({ profile, loading, config }) => {
 
       <div className="right report-box">
         <h4>Suggestion History</h4>
+        <ul className="history">
+          {history.map(suggestion => {
+            const {
+              title,
+              time: { start, end }
+            } = suggestion;
+
+            const startTime = new Date(start);
+            const endTime = new Date(end);
+
+            return (
+              <li key={suggestion.time.start}>
+                <p className="sug-send">
+                  {startTime.getMonth()}/{startTime.getDate()}
+                </p>
+                <p className="sug-title">{title}</p>
+                <p className="sug-time">
+                  {formatTime(startTime)} - {formatTime(endTime)}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );
@@ -174,7 +198,8 @@ const Report = ({ profile, loading, config }) => {
 
 export default withTracker(() => {
   const sub = Meteor.subscribe("config.adjustableSendTime");
-  const loading = !sub.ready();
+  const subHistory = Meteor.subscribe("history");
+  const loading = !sub.ready() || !subHistory.ready();
   const config = Config.findOne();
 
   return {

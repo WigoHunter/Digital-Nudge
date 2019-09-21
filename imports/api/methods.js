@@ -78,7 +78,7 @@ Meteor.methods({
       { _id: id },
       {
         $set: {
-          suggestionHistory: [...suggestions, suggestion]
+          "nudgeProfile.suggestionHistory": [...suggestions, suggestion]
         }
       }
     );

@@ -6,7 +6,8 @@
     "linter": "./node_modules/.bin/eslint --ext .jsx,.js ./",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
-    "visualize": "meteor --production --extra-packages bundle-visualizer"
+    "visualize": "meteor --production --extra-packages bundle-visualizer",
+    "prod": "MONGO_URL='mongodb://digitalnudge:newton438@cluster0-shard-00-00-87kpo.mongodb.net:27017,cluster0-shard-00-01-87kpo.mongodb.net:27017,cluster0-shard-00-02-87kpo.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true' meteor"
   },
   "dependencies": {
     "@babel/runtime": "^7.3.1",

@@ -16,6 +16,17 @@ if (Meteor.isServer) {
     );
   });
 
+  Meteor.publish("history", function() {
+    return Meteor.users.find(
+      { _id: this.userId },
+      {
+        fields: {
+          suggestionHistory: 1
+        }
+      }
+    );
+  });
+
   Meteor.publish("config.adjustableSendTime", function() {
     return Config.find(
       {},

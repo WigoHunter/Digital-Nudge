@@ -16,12 +16,14 @@ class Dashboard extends React.Component {
   render() {
     const { user, loading } = this.props;
 
+    if (loading) {
+      return <p>loading...</p>;
+    }
+
     return (
       <div className="dashboard">
-        {loading ? (
-          <p>loading...</p>
-        ) : (
-          <>
+        <div className="overlay">
+          <div className="content">
             {user.services &&
               AUTHORIZED.includes(user.services.google.email) && (
                 <ConfigModal email={user.services.google.email} />
@@ -33,7 +35,7 @@ class Dashboard extends React.Component {
                 user.services.google.name}
               !
             </h3>
-            <p className="sub">
+            <p className="sub on-overlay">
               You will start receiving personalized daily emails to suggest
               Calendar events!
             </p>
@@ -41,8 +43,8 @@ class Dashboard extends React.Component {
             <button className="logout" onClick={() => Meteor.logout()}>
               Logout
             </button>
-          </>
-        )}
+          </div>
+        </div>
       </div>
     );
   }
