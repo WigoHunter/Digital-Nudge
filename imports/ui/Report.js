@@ -10,7 +10,7 @@ const formatMinutes = minutes =>
     minutes % 60 > 0 ? `${minutes % 60} minute(s)` : ""
   }`;
 
-const Report = ({ profile, loading, config }) => {
+const Report = ({ profile, loading, config, setPreferences }) => {
   if (loading) {
     return null;
   }
@@ -20,7 +20,7 @@ const Report = ({ profile, loading, config }) => {
     return null;
   }
 
-  const [goal, setGoal] = useState(profile.goal || "");
+  // const [goal, setGoal] = useState(profile.goal || "");
   const [sendTime, setSendTime] = useState(
     formatTime(new Date(profile.sendTime) || new Date())
   );
@@ -38,10 +38,10 @@ const Report = ({ profile, loading, config }) => {
   const { adjustableSendTime } = config;
   const history = profile.suggestionHistory || user.suggestionHistory || [];
 
-  const _updateGoal = e => {
-    e.preventDefault();
-    Meteor.call("updateGoal", user._id, goal);
-  };
+  // const _updateGoal = e => {
+  //   e.preventDefault();
+  //   Meteor.call("updateGoal", user._id, goal);
+  // };
 
   const _updateSendTime = e => {
     e.preventDefault();
@@ -151,7 +151,8 @@ const Report = ({ profile, loading, config }) => {
             In the daily email, we look for your free time on the day, predict
             and suggest the best time you work on this goal in the day!
           </p>
-          <form onSubmit={_updateGoal} disabled={profile.goal === goal}>
+          <button onClick={() => setPreferences(true)}>Set Goals</button>
+          {/* <form onSubmit={_updateGoal} disabled={profile.goal === goal}>
             <input
               type="text"
               value={goal}
@@ -162,7 +163,7 @@ const Report = ({ profile, loading, config }) => {
               value="Submit"
               disabled={profile.goal === goal}
             />
-          </form>
+          </form> */}
         </div>
       </div>
 

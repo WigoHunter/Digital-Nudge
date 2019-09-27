@@ -24,6 +24,17 @@ Meteor.methods({
     );
   },
 
+  updatePreferences(id, preferences) {
+    Meteor.users.update(
+      { _id: id },
+      {
+        $set: {
+          "nudgeProfile.preferences": preferences
+        }
+      }
+    );
+  },
+
   getConfig() {
     return Config.findOne();
   },

@@ -3,6 +3,7 @@ import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import Report from "./Report";
 import ConfigModal, { AUTHORIZED } from "./ConfigModal";
+import Onboarding from "./Onboarding";
 
 // Redux
 import { connect } from "react-redux";
@@ -13,8 +14,21 @@ class Dashboard extends React.Component {
     loading: PropTypes.bool
   };
 
+  state = {
+    setPreferences: false
+  };
+
+  _setPreferences = status => {
+    this.setState({
+      setPreferences: status
+    });
+  };
+
   render() {
     const { user, loading } = this.props;
+    const { setPreferences } = this.state;
+
+    const profile = user.nudgeProfile;
 
     if (loading) {
       return <p>loading...</p>;
@@ -23,27 +37,40 @@ class Dashboard extends React.Component {
     return (
       <div className="dashboard">
         <div className="overlay">
-          <div className="content">
-            {user.services &&
-              AUTHORIZED.includes(user.services.google.email) && (
-                <ConfigModal email={user.services.google.email} />
-              )}
-            <h3>
-              Welcome to Digital Nudge,{" "}
+          {!setPreferences && profile && profile.preferences ? (
+            <div className="content">
               {user.services &&
-                user.services.google &&
-                user.services.google.name}
-              !
-            </h3>
-            <p className="sub on-overlay">
-              You will start receiving personalized daily emails to suggest
-              Calendar events!
-            </p>
-            <Report profile={user.nudgeProfile} />
-            <button className="logout" onClick={() => Meteor.logout()}>
-              Logout
-            </button>
-          </div>
+                AUTHORIZED.includes(user.services.google.email) && (
+                  <ConfigModal email={user.services.google.email} />
+                )}
+              <h3>
+                Welcome to Digital Nudge,{" "}
+                {user.services &&
+                  user.services.google &&
+                  user.services.google.name}
+                !
+              </h3>
+              <p className="sub on-overlay">
+                You will start receiving personalized daily emails to suggest
+                Calendar events!
+              </p>
+              <Report
+                profile={user.nudgeProfile}
+                setPreferences={this._setPreferences}
+              />
+              <button className="logout" onClick={() => Meteor.logout()}>
+                Logout
+              </button>
+            </div>
+          ) : (
+            user && (
+              <Onboarding
+                setPreferences={this._setPreferences}
+                preferences={profile ? profile.preferences : {}}
+                userId={user._id}
+              />
+            )
+          )}
         </div>
       </div>
     );

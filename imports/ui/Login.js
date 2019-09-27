@@ -32,18 +32,21 @@ class Login extends React.Component {
           return;
         }
 
-        this.props.authActions.loadingData();
+        const user = Meteor.user();
+        if (user.nudgeProfile == null) {
+          this.props.authActions.loadingData();
 
-        loadUserPastData()
-          .then(() => {
-            setTimeout(() => {
-              this.props.authActions.doneLoadingData();
-            }, 600);
-          })
-          .catch(err => {
-            alert("Oops. Server cannot retrieve data. (See logs)");
-            console.log(err);
-          });
+          loadUserPastData()
+            .then(() => {
+              setTimeout(() => {
+                this.props.authActions.doneLoadingData();
+              }, 600);
+            })
+            .catch(err => {
+              alert("Oops. Server cannot retrieve data. (See logs)");
+              console.log(err);
+            });
+        }
       }
     );
   };
