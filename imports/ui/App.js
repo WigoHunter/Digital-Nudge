@@ -13,7 +13,7 @@ class App extends Component {
   };
 
   componentDidMount() {
-    console.log("last deployed: 2019/09/15");
+    console.log("last deployed: 2019/09/27");
   }
 
   render() {
