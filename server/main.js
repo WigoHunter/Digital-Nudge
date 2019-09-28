@@ -53,9 +53,12 @@ Meteor.startup(() => {
   // console.log(svg);
 
   // Test suggestion
-  // Meteor.users.find().fetch().forEach(user => {
-  // 	t_suggestion(user, (config || seedConfig), true);
-  // });
+  // Meteor.users
+  //   .find()
+  //   .fetch()
+  //   .forEach(user => {
+  //     t_suggestion(user, config || seedConfig, false || false);
+  //   });
 
   // Test LUIS
   // getCategory("Lunch with Jack").then(res => console.log(res));

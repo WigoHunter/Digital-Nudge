@@ -16,17 +16,19 @@ class Onboarding extends React.Component<Props> {
     this.state = {
       hover: 0,
       scienceFiction: false,
-      historicalNovel: false,
+      explandingMind: false,
       workout: false,
       jogging: false,
+      basketball: false,
       homework: false,
-      preview: false,
+      review: false,
       emptyMind: false,
-      nightclub: false,
-      karaoke: false,
+      movie: false,
+      boardGames: false,
+      videoGames: false,
       bar: false,
-      shopGirl: false,
-      dinnerFriend: false,
+      spendTimeGF: false,
+      mealWithFriend: false,
       ...(props.preferences || {})
     };
   }
@@ -54,12 +56,12 @@ class Onboarding extends React.Component<Props> {
 
   render() {
     return (
-      <div className="categoryContainer">
-        <h1 style={{ color: "white" }}>Welcome to Digital Nudges</h1>
-        <h4 style={{ color: "white" }}>
-          We want to know more about you, pick up anything you are interested
-          with
-        </h4>
+      <div className="categoryContainer content">
+        <h3>Welcome to Digital Nudge</h3>
+        <p className="sub" style={{ color: "#fff", margin: "5px 0 30px" }}>
+          Help us help you! Tell us what excites you and we will help you
+          schedule events you love!
+        </p>
         <div className="categoryRow">
           <div
             className="categoryCard"
@@ -74,22 +76,21 @@ class Onboarding extends React.Component<Props> {
               <div className="subCategoryContainer">
                 <label>
                   <input
+                    name="explandingMind"
+                    type="checkbox"
+                    checked={this.state.explandingMind}
+                    onClick={this.handleInputChange}
+                  />{" "}
+                  Read to expand your mind
+                </label>
+                <label>
+                  <input
                     name="scienceFiction"
-                    id="scienceFiction"
                     type="checkbox"
                     checked={this.state.scienceFiction}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Science Fiction
-                </label>
-                <label>
-                  <input
-                    name="historicalNovel"
-                    type="checkbox"
-                    checked={this.state.historicalNovel}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Historical Novel
+                  Read a science fiction
                 </label>
               </div>
             ) : (
@@ -114,7 +115,7 @@ class Onboarding extends React.Component<Props> {
                     checked={this.state.workout}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Work out
+                  Workout
                 </label>
                 <label>
                   <input
@@ -124,6 +125,15 @@ class Onboarding extends React.Component<Props> {
                     onClick={this.handleInputChange}
                   />{" "}
                   Jogging
+                </label>
+                <label>
+                  <input
+                    name="basketball"
+                    type="checkbox"
+                    checked={this.state.basketball}
+                    onClick={this.handleInputChange}
+                  />{" "}
+                  Basketball
                 </label>
               </div>
             ) : (
@@ -148,16 +158,16 @@ class Onboarding extends React.Component<Props> {
                     checked={this.state.homework}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Do homework
+                  Work on homework
                 </label>
                 <label>
                   <input
-                    name="preview"
+                    name="review"
                     type="checkbox"
-                    checked={this.state.preview}
+                    checked={this.state.review}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Preview material
+                  Review course material
                 </label>
               </div>
             ) : (
@@ -204,34 +214,34 @@ class Onboarding extends React.Component<Props> {
               <div className="subCategoryContainer">
                 <label>
                   <input
-                    name="nightclub"
+                    name="movie"
                     type="checkbox"
-                    checked={this.state.nightclub}
+                    checked={this.state.movie}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Nightclub
+                  Watch a movie
                 </label>
                 <label>
                   <input
-                    name="karaoke"
+                    name="videoGames"
                     type="checkbox"
-                    checked={this.state.karaoke}
+                    checked={this.state.videoGames}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Karaoke
+                  Play video games
                 </label>
                 <label>
                   <input
-                    name="bar"
+                    name="boardGames"
                     type="checkbox"
-                    checked={this.state.bar}
+                    checked={this.state.boardGames}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Bar
+                  Play board games
                 </label>
               </div>
             ) : (
-              <h2>Time for Hobbies</h2>
+              <h2>Hobbies</h2>
             )}
           </div>
           <div
@@ -247,21 +257,30 @@ class Onboarding extends React.Component<Props> {
               <div className="subCategoryContainer">
                 <label>
                   <input
-                    name="shopGirl"
+                    name="spendTimeGF"
                     type="checkbox"
-                    checked={this.state.shopGirl}
+                    checked={this.state.spendTimeGF}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Shopping with girlfriend
+                  Spend time with girlfriend
                 </label>
                 <label>
                   <input
-                    name="dinnerFriend"
+                    name="mealWithFriend"
                     type="checkbox"
-                    checked={this.state.dinnerFriend}
+                    checked={this.state.mealWithFriend}
                     onClick={this.handleInputChange}
                   />{" "}
-                  Have dinner with friends
+                  Grab a meal with friends
+                </label>
+                <label>
+                  <input
+                    name="bar"
+                    type="checkbox"
+                    checked={this.state.bar}
+                    onClick={this.handleInputChange}
+                  />{" "}
+                  Hang out at a Bar
                 </label>
               </div>
             ) : (
@@ -270,7 +289,9 @@ class Onboarding extends React.Component<Props> {
           </div>
         </div>
         <div className="onboardingBtn" onClick={() => this.handleSubmit()}>
-          Next Step
+          {Object.keys(this.props.preferences || {}).length > 0
+            ? "Close"
+            : "Confirm"}
         </div>
       </div>
     );

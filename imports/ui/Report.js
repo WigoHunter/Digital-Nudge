@@ -151,7 +151,9 @@ const Report = ({ profile, loading, config, setPreferences }) => {
             In the daily email, we look for your free time on the day, predict
             and suggest the best time you work on this goal in the day!
           </p>
-          <button onClick={() => setPreferences(true)}>Set Goals</button>
+          <button onClick={() => setPreferences(true)} className="outline">
+            Set Goals
+          </button>
           {/* <form onSubmit={_updateGoal} disabled={profile.goal === goal}>
             <input
               type="text"

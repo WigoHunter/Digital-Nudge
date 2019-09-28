@@ -251,3 +251,38 @@ export const formatTime = time =>
   `${time.getHours() > 9 ? "" : "0"}${time.getHours()}:${
     time.getMinutes() > 9 ? "" : "0"
   }${time.getMinutes()}`;
+
+export const mapPrefToSuggestionTitle = pref => {
+  switch (pref) {
+    case "scienceFiction":
+      return "Read a science fiction book";
+    case "explandingMind":
+      return "Read to expand your mind";
+    case "workout":
+      return "Go workout at a gym";
+    case "jogging":
+      return "Go jogging";
+    case "basketball":
+      return "Play some basketball";
+    case "homework":
+      return "Work on homework";
+    case "review":
+      return "Review some course materials";
+    case "emptyMind":
+      return "Meditate and empty my mind";
+    case "movie":
+      return "Watch a movie!";
+    case "boardGames":
+      return "Play some board games";
+    case "videoGames":
+      return "Play some video games";
+    case "bar":
+      return "Go hang out with friends at bar";
+    case "spendTimeGF":
+      return "Spend some time with significant others";
+    case "mealWithFriend":
+      return "Go grab a meal with friends!";
+    default:
+      return "";
+  }
+};

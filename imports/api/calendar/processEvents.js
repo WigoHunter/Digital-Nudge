@@ -4,8 +4,11 @@ import {
   trimEvents,
   reverse,
   fromLocalToUTC,
-  callWithPromise
+  callWithPromise,
+  mapPrefToSuggestionTitle
 } from "../utils";
+
+const _ = require("lodash");
 
 const loadBuzytime = (user, min, max) =>
   new Promise((resolve, reject) => {
@@ -111,7 +114,17 @@ const processEvents = async (
     }
 
     suggestion.time = time;
-    suggestion.title = profile.goal;
+
+    const preferences = profile.preferences;
+    suggestion.title = mapPrefToSuggestionTitle(
+      _.sample(
+        Object.keys(preferences || {}).reduce(
+          (result, cur) =>
+            preferences[cur] === true ? [...result, cur] : result,
+          []
+        )
+      )
+    );
 
     // Get yesterday's planned event, for next suggestion.
     if (suggestion.title === "" && lastSuggestion != null) {
