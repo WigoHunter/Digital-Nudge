@@ -1,5 +1,6 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
+import { mapOldToNew, mapNewToOld } from "../api/utils";
 
 type Props = {
   setPreferences: () => void,
@@ -13,10 +14,12 @@ class Onboarding extends React.Component<Props> {
   constructor(props) {
     super(props);
 
+    const preferences = mapNewToOld(props.preferences) || {};
+
     this.state = {
       hover: 0,
       scienceFiction: false,
-      explandingMind: false,
+      expandingMind: false,
       workout: false,
       jogging: false,
       basketball: false,
@@ -29,15 +32,16 @@ class Onboarding extends React.Component<Props> {
       bar: false,
       spendTimeGF: false,
       mealWithFriend: false,
-      ...(props.preferences || {})
+      ...preferences
     };
   }
 
   handleSubmit = () => {
     // eslint-disable-next-line no-unused-vars
-    const { hover, ...rest } = this.state;
+    const { hover: _, ...rest } = this.state;
+    const preferences = mapOldToNew(rest) || {};
 
-    Meteor.call("updatePreferences", this.props.userId, rest, () => {
+    Meteor.call("updatePreferences", this.props.userId, preferences, () => {
       setTimeout(() => {
         this.props.setPreferences(false);
       }, 300);
@@ -76,9 +80,9 @@ class Onboarding extends React.Component<Props> {
               <div className="subCategoryContainer">
                 <label>
                   <input
-                    name="explandingMind"
+                    name="expandingMind"
                     type="checkbox"
-                    checked={this.state.explandingMind}
+                    checked={this.state.expandingMind}
                     onClick={this.handleInputChange}
                   />{" "}
                   Read to expand your mind

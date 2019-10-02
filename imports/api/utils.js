@@ -286,3 +286,169 @@ export const mapPrefToSuggestionTitle = pref => {
       return "";
   }
 };
+
+// For Preference Migration Helper
+type OldPreferenceType = {|
+  scienceFiction: boolean,
+  expandingMind: boolean,
+  workout: boolean,
+  jogging: boolean,
+  basketball: boolean,
+  homework: boolean,
+  review: boolean,
+  emptyMind: boolean,
+  movie: boolean,
+  boardGames: boolean,
+  videoGames: boolean,
+  bar: boolean,
+  spendTimeGF: boolean,
+  mealWithFriend: boolean
+|};
+
+type NewPreferenceType = {|
+  productivity: {
+    self: {
+      workOnSideProject: boolean
+    },
+    work: {
+      workOnHomework: boolean,
+      reviewCourseMaterial: boolean
+    }
+  },
+
+  wellness: {
+    physical: {
+      workout: boolean,
+      playBasketball: boolean,
+      goJogging: boolean
+    },
+    mental: {
+      meditationToClearMind: boolean,
+      readToExpandMind: boolean
+    }
+  },
+
+  leisure: {
+    personal: {
+      readAFictionBook: boolean,
+      playVideoGames: boolean,
+      spendTimeWithLovedOnes: boolean
+    },
+    social: {
+      hangoutAtBar: boolean,
+      haveAMealWithFriends: boolean,
+      playBoardGames: boolean,
+      goToAMovieWithFriends: boolean
+    }
+  }
+|};
+
+export const mapNewToOld = (
+  preference: NewPreferenceType
+): OldPreferenceType => {
+  if (preference == null || Object.keys(preference).length == 0) {
+    return {};
+  }
+
+  const {
+    productivity: {
+      work: { workOnHomework, reviewCourseMaterial }
+    },
+
+    wellness: {
+      physical: { workout, playBasketball, goJogging },
+      mental: { meditationToClearMind, readToExpandMind }
+    },
+
+    leisure: {
+      personal: { readAFictionBook, playVideoGames, spendTimeWithLovedOnes },
+      social: {
+        hangoutAtBar,
+        haveAMealWithFriends,
+        playBoardGames,
+        goToAMovieWithFriends
+      }
+    }
+  } = preference;
+
+  return {
+    scienceFiction: readAFictionBook,
+    expandingMind: readToExpandMind,
+    workout: workout,
+    jogging: goJogging,
+    basketball: playBasketball,
+    homework: workOnHomework,
+    review: reviewCourseMaterial,
+    emptyMind: meditationToClearMind,
+    movie: goToAMovieWithFriends,
+    boardGames: playBoardGames,
+    videoGames: playVideoGames,
+    bar: hangoutAtBar,
+    spendTimeGF: spendTimeWithLovedOnes,
+    mealWithFriend: haveAMealWithFriends
+  };
+};
+
+export const mapOldToNew = (
+  preference: OldPreferenceType,
+  defaultValue = false
+): NewPreferenceType => {
+  if (preference == null || Object.keys(preference).length == 0) {
+    return {};
+  }
+
+  const {
+    scienceFiction,
+    expandingMind,
+    workout,
+    jogging,
+    basketball,
+    homework,
+    review,
+    emptyMind,
+    movie,
+    boardGames,
+    videoGames,
+    bar,
+    spendTimeGF,
+    mealWithFriend
+  } = preference;
+
+  return {
+    productivity: {
+      self: {
+        workOnSideProject: defaultValue
+      },
+      work: {
+        workOnHomework: homework,
+        reviewCourseMaterial: review
+      }
+    },
+
+    wellness: {
+      physical: {
+        workout: workout,
+        playBasketball: basketball,
+        goJogging: jogging
+      },
+      mental: {
+        meditationToClearMind: emptyMind,
+        readToExpandMind: expandingMind
+      }
+    },
+
+    leisure: {
+      personal: {
+        readAFictionBook: scienceFiction,
+        playVideoGames: videoGames,
+        spendTimeWithLovedOnes: spendTimeGF
+      },
+      social: {
+        hangoutAtBar: bar,
+        haveAMealWithFriends: mealWithFriend,
+        playBoardGames: boardGames,
+        goToAMovieWithFriends: movie
+      }
+    }
+  };
+};
