@@ -335,7 +335,7 @@ type NewPreferenceType = {|
       spendTimeWithLovedOnes: boolean
     },
     social: {
-      hangoutAtBar: boolean,
+      hangOutAtABar: boolean,
       haveAMealWithFriends: boolean,
       playBoardGames: boolean,
       goToAMovieWithFriends: boolean
@@ -363,7 +363,7 @@ export const mapNewToOld = (
     leisure: {
       personal: { readAFictionBook, playVideoGames, spendTimeWithLovedOnes },
       social: {
-        hangoutAtBar,
+        hangOutAtABar,
         haveAMealWithFriends,
         playBoardGames,
         goToAMovieWithFriends
@@ -383,7 +383,7 @@ export const mapNewToOld = (
     movie: goToAMovieWithFriends,
     boardGames: playBoardGames,
     videoGames: playVideoGames,
-    bar: hangoutAtBar,
+    bar: hangOutAtABar,
     spendTimeGF: spendTimeWithLovedOnes,
     mealWithFriend: haveAMealWithFriends
   };
@@ -444,7 +444,7 @@ export const mapOldToNew = (
         spendTimeWithLovedOnes: spendTimeGF
       },
       social: {
-        hangoutAtBar: bar,
+        hangOutAtABar: bar,
         haveAMealWithFriends: mealWithFriend,
         playBoardGames: boardGames,
         goToAMovieWithFriends: movie

@@ -16,6 +16,10 @@ class Onboarding extends React.Component<Props> {
 
     const preferences = mapNewToOld(props.preferences) || {};
 
+    // Kevin's Todo: read this default state from config file. Use these field names to generate activity titles (i.e. "meditationToClearMind" => "meditation to clear mind").
+    // updatePreferences hard reset to this structure anyways.
+    // And then retire the mapNewToOld function.
+
     this.state = {
       hover: 0,
       scienceFiction: false,
