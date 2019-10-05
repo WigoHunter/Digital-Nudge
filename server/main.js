@@ -12,7 +12,7 @@ import seedConfig from "../nudge-config";
 // Tests
 // import { scheduleJobs } from "../imports/api/scheduledJob";
 // import { sendEmail } from "../imports/api/email";
-// import { t_suggestion } from "../imports/api/tests";
+import { t_suggestion } from "../imports/api/tests";
 // import { draw } from "../imports/api/utils";
 
 // LUIS processing
@@ -53,12 +53,12 @@ Meteor.startup(() => {
   // console.log(svg);
 
   // Test suggestion
-  // Meteor.users
-  //   .find()
-  //   .fetch()
-  //   .forEach(user => {
-  //     t_suggestion(user, config || seedConfig, false || false);
-  //   });
+  Meteor.users
+    .find()
+    .fetch()
+    .forEach(user => {
+      t_suggestion(user, config || seedConfig, false);
+    });
 
   // Test LUIS
   // getCategory("Lunch with Jack").then(res => console.log(res));

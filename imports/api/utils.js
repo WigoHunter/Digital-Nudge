@@ -252,6 +252,30 @@ export const formatTime = time =>
     time.getMinutes() > 9 ? "" : "0"
   }${time.getMinutes()}`;
 
+export const fitOneEvent = (freeTime, configPreference, candidates) => {
+  console.log("-----");
+  let suggestion = null;
+  const preferences = Object.keys(configPreference).reduce(
+    (res, key) => ({ ...res, ...(configPreference[key] || {}) }),
+    {}
+  );
+
+  candidates.forEach(event => {
+    if (!preferences.hasOwnProperty(event) || suggestion != null) {
+      return;
+    }
+
+    const preference = preferences[event];
+    console.log(event, freeTime, preference);
+    // start from here.
+  });
+
+  return {
+    freeTime,
+    suggestion: null
+  };
+};
+
 export const mapPrefToSuggestionTitle = pref => {
   switch (pref) {
     case "scienceFiction":

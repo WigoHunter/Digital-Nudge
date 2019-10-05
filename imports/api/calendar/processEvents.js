@@ -5,7 +5,8 @@ import {
   reverse,
   fromLocalToUTC,
   callWithPromise,
-  mapPrefToSuggestionTitle
+  mapPrefToSuggestionTitle,
+  fitOneEvent
 } from "../utils";
 
 const _ = require("lodash");
@@ -45,7 +46,7 @@ const processEvents = async (
     const span = calcEventsSpan(events);
     const newUser = user.newUser;
     const profile = user.nudgeProfile;
-    const lastSuggestion = user.lastSuggestion;
+    // const lastSuggestion = user.lastSuggestion;
     const timezone = profile.timezone || null;
     const min = fromLocalToUTC(
       `${config.suggestion.start}:00`,
@@ -57,11 +58,6 @@ const processEvents = async (
     ).format();
 
     let busy = null;
-    let suggestion = {
-      time: null,
-      title: config.defaults.title,
-      span
-    };
 
     // Process hours in the past day
     if (newUser) {
@@ -89,59 +85,96 @@ const processEvents = async (
       console.log(`Error occurred: ${e}`);
     }
 
+    let freeTime = reverse(busy, min, max);
+    console.log("free time", freeTime);
+
+    const { eventPreferences } = config;
+    const { preferences } = profile;
+    const candidates = Object.keys(preferences || {}).reduce((result, cur) => {
+      const res = Object.keys(preferences[cur]).reduce(
+        (res, key) => ({ ...res, ...(preferences[cur][key] || {}) }),
+        {}
+      );
+
+      return {
+        ...result,
+        [cur]: Object.keys(res).filter(candidate => res[candidate] === true)
+      };
+    }, {});
+
+    let suggestions = [];
+
+    Object.keys(candidates).forEach(category => {
+      if (
+        Array.isArray(candidates[category]) &&
+        candidates[category].length > 0
+      ) {
+        const optimization = fitOneEvent(
+          freeTime,
+          eventPreferences[category] || {},
+          candidates[category]
+        );
+
+        freeTime = optimization.freeTime;
+        suggestions =
+          optimization.suggestion != null
+            ? [...suggestions, optimization.suggestion]
+            : suggestions;
+      }
+    });
+
+    console.log(suggestions);
+
     // Get largest free time
-    let time = reverse(busy, min, max).reduce((prev, next) => {
+    let time = freeTime.reduce((prev, next) => {
       return new Date(prev.end).getTime() - new Date(prev.start).getTime() >
         new Date(next.end).getTime() - new Date(next.start).getTime()
         ? prev
         : next;
     });
 
-    const interval =
-      new Date(time.end).getTime() - new Date(time.start).getTime();
+    // const interval =
+    //   new Date(time.end).getTime() - new Date(time.start).getTime();
 
     // Null if it's less than 1 hour
-    time = interval < 1000 * 60 * 60 ? null : time;
+    // time = interval < 1000 * 60 * 60 ? null : time;
 
     // Cut if it's larger than _max_ hour
-    const maxTime =
-      (config && config.suggestion ? config.suggestion.max : 3) *
-      1000 *
-      60 *
-      60;
-    if (interval > maxTime) {
-      time.end = new Date(new Date(time.start).getTime() + maxTime);
-    }
+    // const maxTime =
+    //   (config && config.suggestion ? config.suggestion.max : 3) *
+    //   1000 *
+    //   60 *
+    //   60;
+    // if (interval > maxTime) {
+    //   time.end = new Date(new Date(time.start).getTime() + maxTime);
+    // }
 
-    suggestion.time = time;
+    let suggestion = {
+      title: config.defaults.title,
+      span,
+      time
+    };
 
-    const preferences = profile.preferences;
     suggestion.title = mapPrefToSuggestionTitle(
-      _.sample(
-        Object.keys(preferences || {}).reduce(
-          (result, cur) =>
-            preferences[cur] === true ? [...result, cur] : result,
-          []
-        )
-      )
+      _.sample(candidates.productivity)
     );
 
     // Get yesterday's planned event, for next suggestion.
-    if (suggestion.title === "" && lastSuggestion != null) {
-      const start = new Date(lastSuggestion.start || "");
-      const end = new Date(lastSuggestion.end || "");
-      const event = events.find(
-        e =>
-          new Date(e.start.dateTime).getHours() == start.getHours() &&
-          new Date(e.start.dateTime).getMinutes() == start.getMinutes() &&
-          new Date(e.end.dateTime).getHours() == end.getHours() &&
-          new Date(e.end.dateTime).getMinutes() == end.getMinutes()
-      );
+    // if (suggestion.title === "" && lastSuggestion != null) {
+    //   const start = new Date(lastSuggestion.start || "");
+    //   const end = new Date(lastSuggestion.end || "");
+    //   const event = events.find(
+    //     e =>
+    //       new Date(e.start.dateTime).getHours() == start.getHours() &&
+    //       new Date(e.start.dateTime).getMinutes() == start.getMinutes() &&
+    //       new Date(e.end.dateTime).getHours() == end.getHours() &&
+    //       new Date(e.end.dateTime).getMinutes() == end.getMinutes()
+    //   );
 
-      if (event) {
-        suggestion.title = event.summary;
-      }
-    }
+    //   if (event) {
+    //     suggestion.title = event.summary;
+    //   }
+    // }
 
     if (send) {
       const target = await callWithPromise("getFullUser", user._id);

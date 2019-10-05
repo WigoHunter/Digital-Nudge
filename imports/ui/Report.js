@@ -184,7 +184,7 @@ const Report = ({ profile, loading, config, setPreferences }) => {
             return (
               <li key={suggestion.time.start}>
                 <p className="sug-send">
-                  {startTime.getMonth()}/{startTime.getDate()}
+                  {startTime.getMonth() + 1}/{startTime.getDate()}
                 </p>
                 <p className="sug-title">{title}</p>
                 <p className="sug-time">
