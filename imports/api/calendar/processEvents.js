@@ -102,26 +102,24 @@ const processEvents = async (
       };
     }, {});
 
-    let suggestions = [];
+    const suggestions = Object.keys(candidates).reduce((result, category) => {
+      const es = candidates[category];
 
-    Object.keys(candidates).forEach(category => {
-      if (
-        Array.isArray(candidates[category]) &&
-        candidates[category].length > 0
-      ) {
-        const optimization = fitOneEvent(
-          freeTime,
-          eventPreferences[category] || {},
-          candidates[category]
-        );
-
-        freeTime = optimization.freeTime;
-        suggestions =
-          optimization.suggestion != null
-            ? [...suggestions, optimization.suggestion]
-            : suggestions;
+      if (!Array.isArray(es) && es.length < 1) {
+        return result;
       }
-    });
+
+      const optimization = fitOneEvent(
+        freeTime,
+        eventPreferences[category] || {},
+        es
+      );
+
+      freeTime = optimization.freeTime;
+      return optimization.suggestion != null
+        ? [...result, optimization.suggestion]
+        : result;
+    }, []);
 
     console.log(suggestions);
 
