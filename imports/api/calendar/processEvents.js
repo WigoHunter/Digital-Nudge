@@ -61,19 +61,13 @@ const processEvents = async (
 
     // Process hours in the past day
     if (newUser) {
-      console.log(`----- New User ${user.services.google.name} detected -----`);
       let spanForPastWeek = await trackPastWeekEventSpan(user);
       await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
       await callWithPromise("setUserToOld", user._id);
     } else {
-      console.log(`----- Old User ${user.services.google.name} detected -----`);
       let spanForPastWeek = user.spanForPastWeek || new Array(7).fill(0);
       spanForPastWeek.shift();
       spanForPastWeek.push(span);
-      console.log(
-        `----- ${user.services.google.name}'s hours for last week events -----`
-      );
-      console.log(spanForPastWeek);
       // Meteor.call("updateSpanForLastWeek", user._id, spanForPastWeek);
       await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
     }
@@ -86,7 +80,6 @@ const processEvents = async (
     }
 
     let freeTime = reverse(busy, min, max);
-    console.log("free time", freeTime);
 
     const { eventPreferences } = config;
     const { preferences } = profile;
@@ -120,8 +113,6 @@ const processEvents = async (
         ? [...result, optimization.suggestion]
         : result;
     }, []);
-
-    console.log(suggestions);
 
     // Get largest free time
     let time = freeTime.reduce((prev, next) => {
@@ -176,18 +167,18 @@ const processEvents = async (
 
     if (send) {
       const target = await callWithPromise("getFullUser", user._id);
-      sendEmail(suggestion, target);
+      sendEmail(suggestions, target);
     }
 
     console.log(
       `----- Suggestion built up for ${user.services.google.name} -----`
     );
-    console.log(suggestion);
+    console.log(suggestions);
     console.log(
       `----- End of Suggestion built up for ${user.services.google.name} -----`
     );
-    Meteor.call("updateLastSuggestion", user._id, suggestion.time);
-    Meteor.call("insertSuggestion", user._id, suggestion);
+    Meteor.call("updateLastSuggestion", user._id, suggestions[0].time);
+    Meteor.call("insertSuggestion", user._id, suggestions);
     return suggestion;
   }
 
@@ -243,7 +234,6 @@ const trackPastWeekEventSpan = user =>
             tmp = timestamps[idx].startTime;
 
             if (tmp.isBefore(currTime) && ydaTime.isBefore(tmp)) {
-              console.log("count!");
               minutesCount += timestamps[idx].duration.asMinutes();
               idx += 1;
             } else {

@@ -1,6 +1,8 @@
 import { Meteor } from "meteor/meteor";
 import { luisEndpoints } from "../../keys";
 
+const _ = require("lodash");
+
 const findUsageType = (profile, config) => {
   const userUsageTypes = config.userUsageTypes;
   const usages = Object.keys(userUsageTypes).sort(
@@ -105,7 +107,7 @@ export const getNextTime = (time, justCheckDate = false) => {
 };
 
 // return moment object
-export const fromLocalToUTC = (time, timezone) => {
+export const fromLocalToUTC = (time, timezone = "America/New_York") => {
   return moment.tz(time, "HH:mm", timezone).utc();
 };
 
@@ -252,27 +254,96 @@ export const formatTime = time =>
     time.getMinutes() > 9 ? "" : "0"
   }${time.getMinutes()}`;
 
+const fit = (freeTime, eStart, eEnd) => {
+  return freeTime.some(time => {
+    const start = moment(time.start);
+    const end = moment(time.end);
+
+    return start.isSameOrBefore(eStart) && eEnd.isSameOrBefore(end);
+  });
+};
+
+const updateFreeTime = (freeTime, start, end) => {
+  return freeTime.reduce((result, time) => {
+    if (fit(freeTime, moment(start), moment(end))) {
+      return [
+        ...result,
+        new Date(time.start).getTime() != start.getTime() && {
+          start: time.start,
+          end: start.toISOString()
+        },
+        new Date(time.end) != end.getTime() && {
+          start: end.toISOString(),
+          end: time.end
+        }
+      ].filter(Boolean);
+    }
+
+    return [...result, time];
+  }, []);
+};
+
+export const genTitle = name => {
+  return [...name]
+    .reduce((result, cur) => {
+      if (cur >= "A" && cur <= "Z") {
+        return [...result, " ", cur.toLowerCase()];
+      }
+
+      return [...result, cur];
+    })
+    .join("");
+};
+
 export const fitOneEvent = (freeTime, configPreference, candidates) => {
-  console.log("-----");
   let suggestion = null;
+  let newFreeTime = null;
   const preferences = Object.keys(configPreference).reduce(
     (res, key) => ({ ...res, ...(configPreference[key] || {}) }),
     {}
   );
 
-  candidates.forEach(event => {
+  _.shuffle(candidates).forEach(event => {
     if (!preferences.hasOwnProperty(event) || suggestion != null) {
       return;
     }
 
     const preference = preferences[event];
-    console.log(event, freeTime, preference);
-    // start from here.
+
+    preference.timeRange.forEach(time => {
+      if (suggestion != null) return;
+
+      const [startStr, endStr] = time.split("-");
+      const start = new Date(fromLocalToUTC(startStr).format());
+      const end = new Date(start);
+      end.setMinutes(start.getMinutes() + preference.duration);
+      const upperBound = fromLocalToUTC(endStr);
+
+      while (moment(end).isSameOrBefore(upperBound)) {
+        if (suggestion != null) return;
+
+        if (fit(freeTime, moment(start), moment(end))) {
+          suggestion = {
+            time: {
+              start,
+              end
+            },
+            title: genTitle(event)
+          };
+
+          newFreeTime = updateFreeTime(freeTime, start, end);
+          return;
+        }
+
+        start.setMinutes(start.getMinutes() + 30);
+        end.setMinutes(end.getMinutes() + 30);
+      }
+    });
   });
 
   return {
-    freeTime,
-    suggestion: null
+    freeTime: newFreeTime != null ? newFreeTime : freeTime,
+    suggestion
   };
 };
 

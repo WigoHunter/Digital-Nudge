@@ -41,7 +41,7 @@
           "duration": 120,
           "timeRange": ["13:00-17:00", "20:00-23:00"]
         },
-        "reviewCourseMaterials": {
+        "reviewCourseMaterial": {
           "duration": 120,
           "timeRange": ["13:00-17:00", "20:00-23:00"]
         }

@@ -171,25 +171,37 @@ const Report = ({ profile, loading, config, setPreferences }) => {
 
       <div className="right report-box">
         <h4>Suggestion History</h4>
-        <ul className="history">
-          {history.map(suggestion => {
+        <ul
+          className="history"
+          style={{ maxHeight: "400px", overflow: "scroll" }}
+        >
+          {history.map((suggestions, index) => {
+            if (suggestions.length < 1) {
+              return;
+            }
+
             const {
-              title,
-              time: { start, end }
-            } = suggestion;
+              time: { start }
+            } = suggestions[0];
 
             const startTime = new Date(start);
-            const endTime = new Date(end);
 
             return (
-              <li key={suggestion.time.start}>
+              <li key={`${suggestions[0].time.start}-${index}`}>
                 <p className="sug-send">
                   {startTime.getMonth() + 1}/{startTime.getDate()}
                 </p>
-                <p className="sug-title">{title}</p>
-                <p className="sug-time">
-                  {formatTime(startTime)} - {formatTime(endTime)}
-                </p>
+                {suggestions
+                  .sort((a, b) => a.time.start - b.time.start)
+                  .map((suggestion, index) => (
+                    <span key={`${suggestion.time.end}-${index * 100}`}>
+                      <p className="sug-title">{suggestion.title}</p>
+                      <p className="sug-time">
+                        {formatTime(new Date(suggestion.time.start))} -{" "}
+                        {formatTime(new Date(suggestion.time.end))}
+                      </p>
+                    </span>
+                  ))}
               </li>
             );
           })}
