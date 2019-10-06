@@ -46,7 +46,6 @@ const processEvents = async (
     const span = calcEventsSpan(events);
     const newUser = user.newUser;
     const profile = user.nudgeProfile;
-    // const lastSuggestion = user.lastSuggestion;
     const timezone = profile.timezone || null;
     const min = fromLocalToUTC(
       `${config.suggestion.start}:00`,
@@ -68,7 +67,6 @@ const processEvents = async (
       let spanForPastWeek = user.spanForPastWeek || new Array(7).fill(0);
       spanForPastWeek.shift();
       spanForPastWeek.push(span);
-      // Meteor.call("updateSpanForLastWeek", user._id, spanForPastWeek);
       await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
     }
 
@@ -122,22 +120,6 @@ const processEvents = async (
         : next;
     });
 
-    // const interval =
-    //   new Date(time.end).getTime() - new Date(time.start).getTime();
-
-    // Null if it's less than 1 hour
-    // time = interval < 1000 * 60 * 60 ? null : time;
-
-    // Cut if it's larger than _max_ hour
-    // const maxTime =
-    //   (config && config.suggestion ? config.suggestion.max : 3) *
-    //   1000 *
-    //   60 *
-    //   60;
-    // if (interval > maxTime) {
-    //   time.end = new Date(new Date(time.start).getTime() + maxTime);
-    // }
-
     let suggestion = {
       title: config.defaults.title,
       span,
@@ -147,23 +129,6 @@ const processEvents = async (
     suggestion.title = mapPrefToSuggestionTitle(
       _.sample(candidates.productivity)
     );
-
-    // Get yesterday's planned event, for next suggestion.
-    // if (suggestion.title === "" && lastSuggestion != null) {
-    //   const start = new Date(lastSuggestion.start || "");
-    //   const end = new Date(lastSuggestion.end || "");
-    //   const event = events.find(
-    //     e =>
-    //       new Date(e.start.dateTime).getHours() == start.getHours() &&
-    //       new Date(e.start.dateTime).getMinutes() == start.getMinutes() &&
-    //       new Date(e.end.dateTime).getHours() == end.getHours() &&
-    //       new Date(e.end.dateTime).getMinutes() == end.getMinutes()
-    //   );
-
-    //   if (event) {
-    //     suggestion.title = event.summary;
-    //   }
-    // }
 
     if (send) {
       const target = await callWithPromise("getFullUser", user._id);
