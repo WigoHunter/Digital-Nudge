@@ -21,29 +21,66 @@ class Onboarding extends React.Component<Props> {
     // And then retire the mapNewToOld function.
 
     this.state = {
-      hover: 0,
-      scienceFiction: false,
-      expandingMind: false,
+      productivityClick: false,
+      wellnessClick: false,
+      leisureClick: false,
+      workOnSideProject: false,
+      workOnHomework: false,
+      reviewCourseMaterial: false,
       workout: false,
-      jogging: false,
-      basketball: false,
-      homework: false,
-      review: false,
-      emptyMind: false,
-      movie: false,
-      boardGames: false,
-      videoGames: false,
-      bar: false,
-      spendTimeGF: false,
-      mealWithFriend: false,
+      playBasketball: false,
+      goJogging: false,
+      meditationToClearMind: false,
+      readToExpandMind: false,
+      readAFictionBook: false,
+      playVideoGames: false,
+      spendTimeWithLovedOnes: false,
+      hangOutAtABar: false,
+      haveAMealWithFriends: false,
+      playBoardGames: false,
+      goToAMovieWithFriends: false,
       ...preferences
     };
   }
 
   handleSubmit = () => {
-    // eslint-disable-next-line no-unused-vars
-    const { hover: _, ...rest } = this.state;
-    const preferences = mapOldToNew(rest) || {};
+    const preferences = {
+      productivity: {
+        self: {
+          workOnSideProject: this.state.workOnSideProject
+        },
+        work: {
+          workOnHomework: this.state.workOnHomework,
+          reviewCourseMaterial: this.state.reviewCourseMaterial
+        }
+      },
+
+      wellness: {
+        physical: {
+          workout: this.state.workout,
+          playBasketball: this.state.playBasketball,
+          goJogging: this.state.goJogging
+        },
+        mental: {
+          meditationToClearMind: this.state.meditationToClearMind,
+          readToExpandMind: this.state.readToExpandMind
+        }
+      },
+
+      leisure: {
+        personal: {
+          readAFictionBook: this.state.readAFictionBook,
+          playVideoGames: this.state.playVideoGames,
+          spendTimeWithLovedOnes: this.state.spendTimeWithLovedOnes
+        },
+        social: {
+          hangOutAtABar: this.state.hangOutAtABar,
+          haveAMealWithFriends: this.state.haveAMealWithFriends,
+          playBoardGames: this.state.playBoardGames,
+          goToAMovieWithFriends: this.state.goToAMovieWithFriends
+        }
+      }
+    };
 
     Meteor.call("updatePreferences", this.props.userId, preferences, () => {
       setTimeout(() => {
@@ -62,6 +99,13 @@ class Onboarding extends React.Component<Props> {
     });
   };
 
+  handleClick = (event) => {
+    const value = !this.state[event.target.id];
+    this.setState({
+      [event.target.id]: value
+    });
+  }
+
   render() {
     return (
       <div className="categoryContainer content">
@@ -71,229 +115,194 @@ class Onboarding extends React.Component<Props> {
           schedule events you love!
         </p>
         <div className="categoryRow">
-          <div
-            className="categoryCard"
-            onMouseEnter={() => {
-              this.setState({ hover: 1 });
-            }}
-            onMouseLeave={() => {
-              this.setState({ hover: 0 });
-            }}
-          >
-            {this.state.hover === 1 ? (
-              <div className="subCategoryContainer">
-                <label>
-                  <input
-                    name="expandingMind"
-                    type="checkbox"
-                    checked={this.state.expandingMind}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Read to expand your mind
+          <div>
+            <div className="categoryCard" onClick={this.handleClick} id='productivityClick'>
+              <h2>Productivity</h2>
+            </div>
+            {this.state.productivityClick ?
+              <div className="categoryDropdown">
+                <div className="subCategory">
+                  <b>Self</b>
+                  <hr className="subCategorySplit"></hr>
+                  <label>
+                    <input
+                      name="workOnSideProject"
+                      type="checkbox"
+                      checked={this.state.workOnSideProject}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Work on side project
                 </label>
-                <label>
-                  <input
-                    name="scienceFiction"
-                    type="checkbox"
-                    checked={this.state.scienceFiction}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Read a science fiction
+                </div>
+                <div className="subCategory">
+                  <b>Work/Academic</b>
+                  <hr className="subCategorySplit"></hr>
+                  <label>
+                    <input
+                      name="workOnHomework"
+                      type="checkbox"
+                      checked={this.state.workOnHomework}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Work on homework
                 </label>
-              </div>
-            ) : (
-              <h2>Reading</h2>
-            )}
+                  <label>
+                    <input
+                      name="reviewCourseMaterial"
+                      type="checkbox"
+                      checked={this.state.reviewCourseMaterial}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Review course material
+                </label>
+                </div>
+              </div> : null
+            }
           </div>
-          <div
-            className="categoryCard"
-            onMouseEnter={() => {
-              this.setState({ hover: 2 });
-            }}
-            onMouseLeave={() => {
-              this.setState({ hover: 0 });
-            }}
-          >
-            {this.state.hover === 2 ? (
-              <div className="subCategoryContainer">
-                <label>
-                  <input
-                    name="workout"
-                    type="checkbox"
-                    checked={this.state.workout}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Workout
+          <div>
+            <div className="categoryCard" onClick={this.handleClick} id='wellnessClick'>
+              <h2>Wellness</h2>
+            </div>
+            {this.state.wellnessClick ?
+              <div className="categoryDropdown">
+                <div className="subCategory">
+                  <b>Physical</b>
+                  <hr className="subCategorySplit"></hr>
+                  <label>
+                    <input
+                      name="workout"
+                      type="checkbox"
+                      checked={this.state.workout}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Workout
                 </label>
-                <label>
-                  <input
-                    name="jogging"
-                    type="checkbox"
-                    checked={this.state.jogging}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Jogging
+                  <label>
+                    <input
+                      name="playBasketball"
+                      type="checkbox"
+                      checked={this.state.playBasketball}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Play basketball
                 </label>
-                <label>
-                  <input
-                    name="basketball"
-                    type="checkbox"
-                    checked={this.state.basketball}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Basketball
+                  <label>
+                    <input
+                      name="goJogging"
+                      type="checkbox"
+                      checked={this.state.goJogging}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Go jogging
                 </label>
+                </div>
+                <div className="subCategory">
+                  <b>Mental</b>
+                  <hr className="subCategorySplit"></hr>
+                  <label>
+                    <input
+                      name="meditationToClearMind"
+                      type="checkbox"
+                      checked={this.state.meditationToClearMind}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Meditate to clear mind
+                </label>
+                  <label>
+                    <input
+                      name="readToExpandMind"
+                      type="checkbox"
+                      checked={this.state.readToExpandMind}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Read to expand mind
+                </label>
+                </div>
               </div>
-            ) : (
-              <h2>Exercising</h2>
-            )}
+              : null
+            }
           </div>
-          <div
-            className="categoryCard"
-            onMouseEnter={() => {
-              this.setState({ hover: 3 });
-            }}
-            onMouseLeave={() => {
-              this.setState({ hover: 0 });
-            }}
-          >
-            {this.state.hover === 3 ? (
-              <div className="subCategoryContainer">
-                <label>
-                  <input
-                    name="homework"
-                    type="checkbox"
-                    checked={this.state.homework}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Work on homework
+
+          <div>
+            <div className="categoryCard" onClick={this.handleClick} id='leisureClick'>
+              <h2>Leisure</h2>
+            </div>
+            {this.state.leisureClick ?
+              <div className="categoryDropdown">
+                <div className="subCategory">
+                  <b>Personal</b>
+                  <hr className="subCategorySplit"></hr>
+                  <label>
+                    <input
+                      name="readAFictionBook"
+                      type="checkbox"
+                      checked={this.state.readAFictionBook}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Read a fiction book
                 </label>
-                <label>
-                  <input
-                    name="review"
-                    type="checkbox"
-                    checked={this.state.review}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Review course material
+                  <label>
+                    <input
+                      name="playVideoGames"
+                      type="checkbox"
+                      checked={this.state.playVideoGames}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Play video games
                 </label>
+                  <label>
+                    <input
+                      name="spendTimeWithLovedOnes"
+                      type="checkbox"
+                      checked={this.state.spendTimeWithLovedOnes}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Spend time with loved ones
+                </label>
+                </div>
+                <div className="subCategory">
+                  <b>Social</b>
+                  <hr className="subCategorySplit"></hr>
+                  <label>
+                    <input
+                      name="hangOutAtABar"
+                      type="checkbox"
+                      checked={this.state.hangOutAtABar}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Hang out at a bar
+                </label>
+                  <label>
+                    <input
+                      name="haveAMealWithFriends"
+                      type="checkbox"
+                      checked={this.state.haveAMealWithFriends}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Have a meal with friends
+                </label>
+                  <label>
+                    <input
+                      name="playBoardGames"
+                      type="checkbox"
+                      checked={this.state.playBoardGames}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Play board games
+                </label>
+                  <label>
+                    <input
+                      name="goToAMovieWithFriends"
+                      type="checkbox"
+                      checked={this.state.goToAMovieWithFriends}
+                      onClick={this.handleInputChange}
+                    />{" "}
+                    Go to a movie with friends
+                </label>
+                </div>
               </div>
-            ) : (
-              <h2>Academic</h2>
-            )}
-          </div>
-        </div>
-        <div className="categoryRow">
-          <div
-            className="categoryCard"
-            onMouseEnter={() => {
-              this.setState({ hover: 4 });
-            }}
-            onMouseLeave={() => {
-              this.setState({ hover: 0 });
-            }}
-          >
-            {this.state.hover === 4 ? (
-              <div className="subCategoryContainer">
-                <label>
-                  <input
-                    name="emptyMind"
-                    type="checkbox"
-                    checked={this.state.emptyMind}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Empty your mind
-                </label>
-              </div>
-            ) : (
-              <h2>Meditation</h2>
-            )}
-          </div>
-          <div
-            className="categoryCard"
-            onMouseEnter={() => {
-              this.setState({ hover: 5 });
-            }}
-            onMouseLeave={() => {
-              this.setState({ hover: 0 });
-            }}
-          >
-            {this.state.hover === 5 ? (
-              <div className="subCategoryContainer">
-                <label>
-                  <input
-                    name="movie"
-                    type="checkbox"
-                    checked={this.state.movie}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Watch a movie
-                </label>
-                <label>
-                  <input
-                    name="videoGames"
-                    type="checkbox"
-                    checked={this.state.videoGames}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Play video games
-                </label>
-                <label>
-                  <input
-                    name="boardGames"
-                    type="checkbox"
-                    checked={this.state.boardGames}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Play board games
-                </label>
-              </div>
-            ) : (
-              <h2>Hobbies</h2>
-            )}
-          </div>
-          <div
-            className="categoryCard"
-            onMouseEnter={() => {
-              this.setState({ hover: 6 });
-            }}
-            onMouseLeave={() => {
-              this.setState({ hover: 0 });
-            }}
-          >
-            {this.state.hover === 6 ? (
-              <div className="subCategoryContainer">
-                <label>
-                  <input
-                    name="spendTimeGF"
-                    type="checkbox"
-                    checked={this.state.spendTimeGF}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Spend time with girlfriend
-                </label>
-                <label>
-                  <input
-                    name="mealWithFriend"
-                    type="checkbox"
-                    checked={this.state.mealWithFriend}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Grab a meal with friends
-                </label>
-                <label>
-                  <input
-                    name="bar"
-                    type="checkbox"
-                    checked={this.state.bar}
-                    onClick={this.handleInputChange}
-                  />{" "}
-                  Hang out at a Bar
-                </label>
-              </div>
-            ) : (
-              <h2>Social</h2>
-            )}
+              : null
+            }
           </div>
         </div>
         <div className="onboardingBtn" onClick={() => this.handleSubmit()}>
