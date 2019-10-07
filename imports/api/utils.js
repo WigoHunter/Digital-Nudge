@@ -438,6 +438,16 @@ type NewPreferenceType = {|
   }
 |};
 
+export const flattenPreference = (preferences: NewPreferenceType) => {
+  const categories = Object.keys(preferences).reduce((result, category) => {
+    return { ...result, ...preferences[category] };
+  }, {});
+
+  return Object.keys(categories).reduce((result, sub) => {
+    return { ...result, ...categories[sub] };
+  }, {});
+};
+
 export const mapNewToOld = (
   preference: NewPreferenceType
 ): OldPreferenceType => {

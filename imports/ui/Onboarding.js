@@ -1,6 +1,6 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
-import { mapOldToNew, mapNewToOld } from "../api/utils";
+import { flattenPreference } from "../api/utils";
 
 type Props = {
   setPreferences: () => void,
@@ -14,7 +14,7 @@ class Onboarding extends React.Component<Props> {
   constructor(props) {
     super(props);
 
-    const preferences = mapNewToOld(props.preferences) || {};
+    const preferences = flattenPreference(props.preferences) || {};
 
     // Kevin's Todo: read this default state from config file. Use these field names to generate activity titles (i.e. "meditationToClearMind" => "meditation to clear mind").
     // updatePreferences hard reset to this structure anyways.
@@ -99,12 +99,12 @@ class Onboarding extends React.Component<Props> {
     });
   };
 
-  handleClick = (event) => {
+  handleClick = event => {
     const value = !this.state[event.target.id];
     this.setState({
       [event.target.id]: value
     });
-  }
+  };
 
   render() {
     return (
@@ -116,10 +116,14 @@ class Onboarding extends React.Component<Props> {
         </p>
         <div className="categoryRow">
           <div>
-            <div className="categoryCard" onClick={this.handleClick} id='productivityClick'>
+            <div
+              className="categoryCard"
+              onClick={this.handleClick}
+              id="productivityClick"
+            >
               <h2>Productivity</h2>
             </div>
-            {this.state.productivityClick ?
+            {this.state.productivityClick ? (
               <div className="categoryDropdown">
                 <div className="subCategory">
                   <b>Self</b>
@@ -132,7 +136,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Work on side project
-                </label>
+                  </label>
                 </div>
                 <div className="subCategory">
                   <b>Work/Academic</b>
@@ -145,7 +149,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Work on homework
-                </label>
+                  </label>
                   <label>
                     <input
                       name="reviewCourseMaterial"
@@ -154,16 +158,20 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Review course material
-                </label>
+                  </label>
                 </div>
-              </div> : null
-            }
+              </div>
+            ) : null}
           </div>
           <div>
-            <div className="categoryCard" onClick={this.handleClick} id='wellnessClick'>
+            <div
+              className="categoryCard"
+              onClick={this.handleClick}
+              id="wellnessClick"
+            >
               <h2>Wellness</h2>
             </div>
-            {this.state.wellnessClick ?
+            {this.state.wellnessClick ? (
               <div className="categoryDropdown">
                 <div className="subCategory">
                   <b>Physical</b>
@@ -176,7 +184,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Workout
-                </label>
+                  </label>
                   <label>
                     <input
                       name="playBasketball"
@@ -185,7 +193,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Play basketball
-                </label>
+                  </label>
                   <label>
                     <input
                       name="goJogging"
@@ -194,7 +202,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Go jogging
-                </label>
+                  </label>
                 </div>
                 <div className="subCategory">
                   <b>Mental</b>
@@ -207,7 +215,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Meditate to clear mind
-                </label>
+                  </label>
                   <label>
                     <input
                       name="readToExpandMind"
@@ -216,18 +224,21 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Read to expand mind
-                </label>
+                  </label>
                 </div>
               </div>
-              : null
-            }
+            ) : null}
           </div>
 
           <div>
-            <div className="categoryCard" onClick={this.handleClick} id='leisureClick'>
+            <div
+              className="categoryCard"
+              onClick={this.handleClick}
+              id="leisureClick"
+            >
               <h2>Leisure</h2>
             </div>
-            {this.state.leisureClick ?
+            {this.state.leisureClick ? (
               <div className="categoryDropdown">
                 <div className="subCategory">
                   <b>Personal</b>
@@ -240,7 +251,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Read a fiction book
-                </label>
+                  </label>
                   <label>
                     <input
                       name="playVideoGames"
@@ -249,7 +260,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Play video games
-                </label>
+                  </label>
                   <label>
                     <input
                       name="spendTimeWithLovedOnes"
@@ -258,7 +269,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Spend time with loved ones
-                </label>
+                  </label>
                 </div>
                 <div className="subCategory">
                   <b>Social</b>
@@ -271,7 +282,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Hang out at a bar
-                </label>
+                  </label>
                   <label>
                     <input
                       name="haveAMealWithFriends"
@@ -280,7 +291,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Have a meal with friends
-                </label>
+                  </label>
                   <label>
                     <input
                       name="playBoardGames"
@@ -289,7 +300,7 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Play board games
-                </label>
+                  </label>
                   <label>
                     <input
                       name="goToAMovieWithFriends"
@@ -298,11 +309,10 @@ class Onboarding extends React.Component<Props> {
                       onClick={this.handleInputChange}
                     />{" "}
                     Go to a movie with friends
-                </label>
+                  </label>
                 </div>
               </div>
-              : null
-            }
+            ) : null}
           </div>
         </div>
         <div className="onboardingBtn" onClick={() => this.handleSubmit()}>
