@@ -41,6 +41,10 @@ const processEvents = async (
   send = true
 ) => {
   if (events && events.items && config) {
+    if (config.eventPreferences == null) {
+      return;
+    }
+
     // Initialize variables
     events = trimEvents(events.items);
     const span = calcEventsSpan(events);
@@ -129,7 +133,7 @@ const processEvents = async (
     };
 
     suggestion.title = mapPrefToSuggestionTitle(
-      _.sample(candidates.productivity)
+      _.sample(candidates.productivity || [])
     );
 
     if (send) {
