@@ -1,8 +1,8 @@
 import { Meteor } from "meteor/meteor";
 import keys from "../../keys";
 import sgMail from "@sendgrid/mail";
-import { fromUTCToLocal, average, callWithPromise } from "./utils";
-import draw from "./draw";
+import { fromUTCToLocal, callWithPromise } from "./utils";
+// import draw from "./draw";
 
 sgMail.setApiKey(keys["sendGrid"]["key"]);
 
@@ -88,7 +88,7 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
     let data = [];
     if (suggestions.length !== 0) {
       withSuggestion = true;
-      data = suggestions.map((suggestion) => {
+      data = suggestions.map(suggestion => {
         const start = new Date(suggestion.time.start);
         const end = new Date(suggestion.time.end);
         // const timezone = user.nudgeProfile.timezone || "";
@@ -103,14 +103,14 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
         );
         const time = `${start.toISOString().split(".")[0]}Z/${
           end.toISOString().split(".")[0]
-          }Z`.replace(/[-:]/g, "");
+        }Z`.replace(/[-:]/g, "");
 
         return {
           time: time,
           hours: `${localStart.format("HH:mm")} - ${localEnd.format("HH:mm")}`,
           title: suggestion.title
-        }
-      })
+        };
+      });
     }
 
     try {
