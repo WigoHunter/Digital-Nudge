@@ -93,24 +93,26 @@ const processEvents = async (
       };
     }, {});
 
-    const suggestions = Object.keys(candidates).reduce((result, category) => {
-      const es = candidates[category];
+    const suggestions = Object.keys(candidates)
+      .reduce((result, category) => {
+        const es = candidates[category];
 
-      if (!Array.isArray(es) && es.length < 1) {
-        return result;
-      }
+        if (!Array.isArray(es) && es.length < 1) {
+          return result;
+        }
 
-      const optimization = fitOneEvent(
-        freeTime,
-        eventPreferences[category] || {},
-        es
-      );
+        const optimization = fitOneEvent(
+          freeTime,
+          eventPreferences[category] || {},
+          es
+        );
 
-      freeTime = optimization.freeTime;
-      return optimization.suggestion != null
-        ? [...result, optimization.suggestion]
-        : result;
-    }, []);
+        freeTime = optimization.freeTime;
+        return optimization.suggestion != null
+          ? [...result, optimization.suggestion]
+          : result;
+      }, [])
+      .sort((a, b) => a.time.start - b.time.start);
 
     // Get largest free time
     let time = freeTime.reduce((prev, next) => {
