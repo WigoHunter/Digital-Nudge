@@ -115,6 +115,6 @@ export const scheduleJobs = async () => {
 
 SyncedCron.add({
   name: "daily scheduling",
-  schedule: parser => parser.text("at 07:00"),
+  schedule: parser => parser.text("at 04:00"),
   job: () => scheduleJobs()
 });
