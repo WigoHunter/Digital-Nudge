@@ -173,7 +173,7 @@ const Report = ({ profile, loading, config, setPreferences }) => {
         <h4>Suggestion History</h4>
         <ul
           className="history"
-          style={{ maxHeight: "400px", overflow: "scroll" }}
+          style={{ maxHeight: "400px", overflowY: "scroll" }}
         >
           {history.map((suggestions, index) => {
             if (suggestions.length < 1) {

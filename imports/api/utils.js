@@ -439,6 +439,10 @@ type NewPreferenceType = {|
 |};
 
 export const flattenPreference = (preferences: NewPreferenceType) => {
+  if (preferences == null || Object.keys(preferences || {}).length == 0) {
+    return {};
+  }
+
   const categories = Object.keys(preferences).reduce((result, category) => {
     return { ...result, ...preferences[category] };
   }, {});
