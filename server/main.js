@@ -57,7 +57,7 @@ Meteor.startup(() => {
     .find()
     .fetch()
     .forEach(user => {
-      t_suggestion(user, config || seedConfig, false);
+      t_suggestion(user, config || seedConfig, true);
     });
 
   // Test LUIS
