@@ -43,13 +43,19 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
     }
 
     try {
+      const keywords = suggestions.map(sug => sug.keyword);
+      const emailTitle =
+        keywords.length > 0
+          ? `[Digital Nudge] Boost Your Day with ${keywords.join(", ")}`
+          : "Hello from Digital Nudge!";
+
       const msg = {
         to: user.services.google.email,
         from: "kevin@nudges.ml",
-        subject: "Daily Digest From Digital Nudge",
+        subject: emailTitle,
         templateId: "d-5934901c3a1d48048bdd247ef0166839",
         dynamic_template_data: {
-          subject: "Hello From Digital Nudge",
+          subject: emailTitle,
           gctext: withSuggestion
             ? "Let's make some plans today!"
             : "Awesome job! Good luck working hard today!",
