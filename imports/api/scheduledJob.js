@@ -53,6 +53,10 @@ export const scheduleJobs = async () => {
   const config = await callWithPromise("getConfig");
   const users = Meteor.users.find().fetch();
 
+  if (config.ignore.includes(new Date().getDay())) {
+    return;
+  }
+
   users.forEach(user => {
     const profile = user.nudgeProfile;
     console.log("");
@@ -63,8 +67,6 @@ export const scheduleJobs = async () => {
       !profile || !profile.sendTime
         ? withDefault(profile, config)
         : withProfile(profile, config);
-
-    // TODO: Ignore on the configured days - ignore this for testing
 
     // Logs
     console.log(`scheduling user ${user.services.google.name}'s email at:`);
