@@ -121,7 +121,7 @@ class Onboarding extends React.Component<Props> {
               onClick={this.handleClick}
               id="productivityClick"
             >
-              <h2>Productivity</h2>
+              <h1>Productivity</h1>
             </div>
             {this.state.productivityClick ? (
               <div className="categoryDropdown">
@@ -169,7 +169,7 @@ class Onboarding extends React.Component<Props> {
               onClick={this.handleClick}
               id="wellnessClick"
             >
-              <h2>Wellness</h2>
+              <h1>Wellness</h1>
             </div>
             {this.state.wellnessClick ? (
               <div className="categoryDropdown">
@@ -236,7 +236,7 @@ class Onboarding extends React.Component<Props> {
               onClick={this.handleClick}
               id="leisureClick"
             >
-              <h2>Leisure</h2>
+              <h1>Leisure</h1>
             </div>
             {this.state.leisureClick ? (
               <div className="categoryDropdown">
