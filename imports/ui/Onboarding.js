@@ -16,10 +16,6 @@ class Onboarding extends React.Component<Props> {
 
     const preferences = flattenPreference(props.preferences) || {};
 
-    // Kevin's Todo: read this default state from config file. Use these field names to generate activity titles (i.e. "meditationToClearMind" => "meditation to clear mind").
-    // updatePreferences hard reset to this structure anyways.
-    // And then retire the mapNewToOld function.
-
     this.state = {
       productivityClick: false,
       wellnessClick: false,
@@ -116,11 +112,15 @@ class Onboarding extends React.Component<Props> {
         </p>
         <div className="categoryRow">
           <div>
-            <div
-              className="categoryCard"
-              id="productivityCard"
-            >
-              <a href="#" id="productivityClick" className="categoryClick" onClick={this.handleClick}>Productivity</a>
+            <div className="categoryCard" id="productivityCard">
+              <a
+                href="#"
+                id="productivityClick"
+                className="categoryClick"
+                onClick={this.handleClick}
+              >
+                Productivity
+              </a>
             </div>
             {this.state.productivityClick ? (
               <div className="categoryDropdown">
@@ -163,11 +163,15 @@ class Onboarding extends React.Component<Props> {
             ) : null}
           </div>
           <div>
-            <div
-              className="categoryCard"
-              id="wellnessCard"
-            >
-              <a href="#" id="wellnessClick" className="categoryClick" onClick={this.handleClick}>Wellness</a>
+            <div className="categoryCard" id="wellnessCard">
+              <a
+                href="#"
+                id="wellnessClick"
+                className="categoryClick"
+                onClick={this.handleClick}
+              >
+                Wellness
+              </a>
             </div>
             {this.state.wellnessClick ? (
               <div className="categoryDropdown">
@@ -229,11 +233,15 @@ class Onboarding extends React.Component<Props> {
           </div>
 
           <div>
-            <div
-              className="categoryCard"
-              id="leisureCard"
-            >
-              <a href="#" id="leisureClick" className="categoryClick" onClick={this.handleClick}>Leisure</a>
+            <div className="categoryCard" id="leisureCard">
+              <a
+                href="#"
+                id="leisureClick"
+                className="categoryClick"
+                onClick={this.handleClick}
+              >
+                Leisure
+              </a>
             </div>
             {this.state.leisureClick ? (
               <div className="categoryDropdown">

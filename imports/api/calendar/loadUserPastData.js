@@ -1,7 +1,5 @@
 import jstz from "jstz";
 import {
-  getCategory,
-  getTopic,
   getRawTime,
   isDifferentDay,
   getClockTime,

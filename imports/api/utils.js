@@ -317,6 +317,7 @@ export const fitOneEvent = (
     }
 
     const preference = preferences[event];
+    const { keyword } = preference;
 
     preference.timeRange.forEach(time => {
       if (suggestion != null) return;
@@ -336,6 +337,7 @@ export const fitOneEvent = (
               start,
               end
             },
+            keyword,
             title: `${
               category != null ? `[${capFirst(category)}] ` : ""
             }${genTitle(event)}`
