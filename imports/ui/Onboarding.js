@@ -1,6 +1,8 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
-import { flattenPreference } from "../api/utils";
+import { flattenPreference, genTitle } from "../api/utils";
+import { Config } from "../db/configs";
+import { withTracker } from "meteor/react-meteor-data";
 
 type Props = {
   setPreferences: () => void,
@@ -107,6 +109,40 @@ class Onboarding extends React.Component<Props> {
   };
 
   render() {
+    let dropdowns = [null, null, null];
+
+    if (!this.props.loading && this.props.config.eventPreferences) {
+      Object.keys(this.props.config.eventPreferences).map(((category, index) => {
+        const subCategory = this.props.config.eventPreferences[category];
+        if (subCategory) {
+          dropdowns[index] =
+            <div className="categoryDropdown" key={'categoryDropdown' + index}>
+              {Object.keys(subCategory).map((title, idx) => {
+                const subTitles = Object.keys(subCategory[title]);
+
+                return (
+                  <div className="subCategory" key={'subCategory' + idx}>
+                    <b>{title}</b>
+                    <hr className="subCategorySplit"></hr>
+                    {subTitles.map(sub => (
+                      <label key={sub}>
+                        <input
+                          name={sub}
+                          type="checkbox"
+                          checked={this.state[sub]}
+                          onClick={this.handleInputChange}
+                        />{" "}
+                        {genTitle(sub)}
+                      </label>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+        }
+      }));
+    }
+
     return (
       <div className="categoryContainer content">
         <h3>Welcome to Digital Nudge</h3>
@@ -122,45 +158,7 @@ class Onboarding extends React.Component<Props> {
             >
               <a href="#" id="productivityClick" className="categoryClick" onClick={this.handleClick}>Productivity</a>
             </div>
-            {this.state.productivityClick ? (
-              <div className="categoryDropdown">
-                <div className="subCategory">
-                  <b>Self</b>
-                  <hr className="subCategorySplit"></hr>
-                  <label>
-                    <input
-                      name="workOnSideProject"
-                      type="checkbox"
-                      checked={this.state.workOnSideProject}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Work on side project
-                  </label>
-                </div>
-                <div className="subCategory">
-                  <b>Work/Academic</b>
-                  <hr className="subCategorySplit"></hr>
-                  <label>
-                    <input
-                      name="workOnHomework"
-                      type="checkbox"
-                      checked={this.state.workOnHomework}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Work on homework
-                  </label>
-                  <label>
-                    <input
-                      name="reviewCourseMaterial"
-                      type="checkbox"
-                      checked={this.state.reviewCourseMaterial}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Review course material
-                  </label>
-                </div>
-              </div>
-            ) : null}
+            {this.state.productivityClick ? dropdowns[0] : null}
           </div>
           <div>
             <div
@@ -169,63 +167,7 @@ class Onboarding extends React.Component<Props> {
             >
               <a href="#" id="wellnessClick" className="categoryClick" onClick={this.handleClick}>Wellness</a>
             </div>
-            {this.state.wellnessClick ? (
-              <div className="categoryDropdown">
-                <div className="subCategory">
-                  <b>Physical</b>
-                  <hr className="subCategorySplit"></hr>
-                  <label>
-                    <input
-                      name="workout"
-                      type="checkbox"
-                      checked={this.state.workout}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Workout
-                  </label>
-                  <label>
-                    <input
-                      name="playBasketball"
-                      type="checkbox"
-                      checked={this.state.playBasketball}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Play basketball
-                  </label>
-                  <label>
-                    <input
-                      name="goJogging"
-                      type="checkbox"
-                      checked={this.state.goJogging}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Go jogging
-                  </label>
-                </div>
-                <div className="subCategory">
-                  <b>Mental</b>
-                  <hr className="subCategorySplit"></hr>
-                  <label>
-                    <input
-                      name="meditationToClearMind"
-                      type="checkbox"
-                      checked={this.state.meditationToClearMind}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Meditate to clear mind
-                  </label>
-                  <label>
-                    <input
-                      name="readToExpandMind"
-                      type="checkbox"
-                      checked={this.state.readToExpandMind}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Read to expand mind
-                  </label>
-                </div>
-              </div>
-            ) : null}
+            {this.state.wellnessClick ? dropdowns[1] : null}
           </div>
 
           <div>
@@ -235,81 +177,7 @@ class Onboarding extends React.Component<Props> {
             >
               <a href="#" id="leisureClick" className="categoryClick" onClick={this.handleClick}>Leisure</a>
             </div>
-            {this.state.leisureClick ? (
-              <div className="categoryDropdown">
-                <div className="subCategory">
-                  <b>Personal</b>
-                  <hr className="subCategorySplit"></hr>
-                  <label>
-                    <input
-                      name="readAFictionBook"
-                      type="checkbox"
-                      checked={this.state.readAFictionBook}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Read a fiction book
-                  </label>
-                  <label>
-                    <input
-                      name="playVideoGames"
-                      type="checkbox"
-                      checked={this.state.playVideoGames}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Play video games
-                  </label>
-                  <label>
-                    <input
-                      name="spendTimeWithLovedOnes"
-                      type="checkbox"
-                      checked={this.state.spendTimeWithLovedOnes}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Spend time with loved ones
-                  </label>
-                </div>
-                <div className="subCategory">
-                  <b>Social</b>
-                  <hr className="subCategorySplit"></hr>
-                  <label>
-                    <input
-                      name="hangOutAtABar"
-                      type="checkbox"
-                      checked={this.state.hangOutAtABar}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Hang out at a bar
-                  </label>
-                  <label>
-                    <input
-                      name="haveAMealWithFriends"
-                      type="checkbox"
-                      checked={this.state.haveAMealWithFriends}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Have a meal with friends
-                  </label>
-                  <label>
-                    <input
-                      name="playBoardGames"
-                      type="checkbox"
-                      checked={this.state.playBoardGames}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Play board games
-                  </label>
-                  <label>
-                    <input
-                      name="goToAMovieWithFriends"
-                      type="checkbox"
-                      checked={this.state.goToAMovieWithFriends}
-                      onClick={this.handleInputChange}
-                    />{" "}
-                    Go to a movie with friends
-                  </label>
-                </div>
-              </div>
-            ) : null}
+            {this.state.leisureClick ? dropdowns[2] : null}
           </div>
         </div>
         <div className="onboardingBtn" onClick={() => this.handleSubmit()}>
@@ -322,4 +190,13 @@ class Onboarding extends React.Component<Props> {
   }
 }
 
-export default Onboarding;
+export default withTracker(() => {
+  const sub = Meteor.subscribe("config.eventPreferences");
+  const loading = !sub.ready();
+  const config = Config.findOne();
+
+  return {
+    loading,
+    config
+  };
+})(Onboarding);
