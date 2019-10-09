@@ -32,17 +32,20 @@
       "self": {
         "workOnSideProject": {
           "duration": 120,
-          "timeRange": ["09:00-17:00"]
+          "timeRange": ["09:00-17:00"],
+          "keyword": "Side project"
         }
       },
       "work": {
         "workOnHomework": {
           "duration": 120,
-          "timeRange": ["13:00-17:00", "20:00-23:00"]
+          "timeRange": ["13:00-17:00", "20:00-23:00"],
+          "keyword": "Homework"
         },
         "reviewCourseMaterial": {
           "duration": 120,
-          "timeRange": ["13:00-17:00", "20:00-23:00"]
+          "timeRange": ["13:00-17:00", "20:00-23:00"],
+          "keyword": "Courses"
         }
       }
     },
@@ -50,25 +53,30 @@
       "physical": {
         "workout": {
           "duration": 60,
-          "timeRange": ["08:00-10:00", "17:00-19:00", "21:00-22:00"]
+          "timeRange": ["08:00-10:00", "17:00-19:00", "21:00-22:00"],
+          "keyword": "Workout"
         },
         "playBasketball": {
           "duration": 60,
-          "timeRange": ["08:00-10:00", "16:00-18:00"]
+          "timeRange": ["08:00-10:00", "16:00-18:00"],
+          "keyword": "Basketball"
         },
         "goJogging": {
           "duration": 60,
-          "timeRange": ["08:00-10:00", "16:00-19:00"]
+          "timeRange": ["08:00-10:00", "16:00-19:00"],
+          "keyword": "Jogging"
         }
       },
       "mental": {
         "meditationToClearMind": {
           "duration": 30,
-          "timeRange": ["08:00-10:00", "21:00-23:00"]
+          "timeRange": ["08:00-10:00", "21:00-23:00"],
+          "keyword": "Meditation"
         },
         "readToExpandMind": {
           "duration": 30,
-          "timeRange": ["08:00-12:00", "17:00-18:00"]
+          "timeRange": ["08:00-12:00", "17:00-18:00"],
+          "keyword": "Reading"
         }
       }
     },
@@ -76,33 +84,40 @@
       "personal": {
         "readAFictionBook": {
           "duration": 60,
-          "timeRange": ["20:00-23:00"]
+          "timeRange": ["20:00-23:00"],
+          "keyword": "Fiction books"
         },
         "playVideoGames": {
           "duration": 60,
-          "timeRange": ["20:00-23:00"]
+          "timeRange": ["20:00-23:00"],
+          "keyword": "Video games"
         },
         "spendTimeWithLovedOnes": {
           "duration": 60,
-          "timeRange": ["20:00-23:00"]
+          "timeRange": ["20:00-23:00"],
+          "keyword": "Time with loved ones"
         }
       },
       "social": {
         "hangOutAtABar": {
           "duration": 120,
-          "timeRange": ["21:00-23:00"]
+          "timeRange": ["21:00-23:00"],
+          "keyword": "Bar"
         },
         "haveAMealWithFriends": {
           "duration": 90,
-          "timeRange": ["11:00-13:00", "17:00-20:00"]
+          "timeRange": ["11:00-13:00", "17:00-20:00"],
+          "keyword": "Friends"
         },
         "playBoardGames": {
           "duration": 60,
-          "timeRange": ["20:00-23:00"]
+          "timeRange": ["20:00-23:00"],
+          "keyword": "Board games"
         },
         "goToAMovieWithFriends": {
           "duration": 120,
-          "timeRange": ["20:00-23:00"]
+          "timeRange": ["20:00-23:00"],
+          "keyword": "Movie"
         }
       }
     }

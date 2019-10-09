@@ -106,7 +106,8 @@ const processEvents = async (
         const optimization = fitOneEvent(
           freeTime,
           eventPreferences[category] || {},
-          es
+          es,
+          category
         );
 
         freeTime = optimization.freeTime;

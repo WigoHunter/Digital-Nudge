@@ -283,6 +283,9 @@ const updateFreeTime = (freeTime, start, end) => {
   }, []);
 };
 
+const capFirst = str =>
+  str != null && str.length > 0 ? str[0].toUpperCase() + str.slice(1) : "";
+
 export const genTitle = name => {
   return [...name]
     .reduce((result, cur) => {
@@ -295,7 +298,12 @@ export const genTitle = name => {
     .join("");
 };
 
-export const fitOneEvent = (freeTime, configPreference, candidates) => {
+export const fitOneEvent = (
+  freeTime,
+  configPreference,
+  candidates,
+  category
+) => {
   let suggestion = null;
   let newFreeTime = null;
   const preferences = Object.keys(configPreference).reduce(
@@ -328,7 +336,9 @@ export const fitOneEvent = (freeTime, configPreference, candidates) => {
               start,
               end
             },
-            title: genTitle(event)
+            title: `${
+              category != null ? `[${capFirst(category)}] ` : ""
+            }${genTitle(event)}`
           };
 
           newFreeTime = updateFreeTime(freeTime, start, end);

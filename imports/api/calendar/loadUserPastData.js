@@ -54,8 +54,8 @@ const loadUserPastData = (id = Meteor.user()._id) =>
         let startTimesOfDailyEarliest = [];
         let categories = {};
         let topics = {};
-        let categoriesPromises = [];
-        let topicsPromises = [];
+        // let categoriesPromises = [];
+        // let topicsPromises = [];
         let sendTime = null;
 
         events = trimEvents(events);
@@ -68,13 +68,13 @@ const loadUserPastData = (id = Meteor.user()._id) =>
             startTimes.push(getRawTime(curStart));
 
             // WHY? and how to solve this bottleneck?
-            if (categoriesPromises.length < 3) {
-              categoriesPromises.push(getCategory(e.summary));
-            }
+            // if (categoriesPromises.length < 3) {
+            //   categoriesPromises.push(getCategory(e.summary));
+            // }
 
-            if (topicsPromises.length < 3) {
-              topicsPromises.push(getTopic(e.summary));
-            }
+            // if (topicsPromises.length < 3) {
+            //   topicsPromises.push(getTopic(e.summary));
+            // }
 
             if (
               profile.earliest == null ||
@@ -111,24 +111,24 @@ const loadUserPastData = (id = Meteor.user()._id) =>
         });
 
         // Get all NLP results (categories)
-        const categoryResponse = await Promise.all(categoriesPromises);
-        categoryResponse.forEach(category => {
-          if (!categories.hasOwnProperty(category)) {
-            categories[category] = 0;
-          }
+        // const categoryResponse = await Promise.all(categoriesPromises);
+        // categoryResponse.forEach(category => {
+        //   if (!categories.hasOwnProperty(category)) {
+        //     categories[category] = 0;
+        //   }
 
-          categories[category]++;
-        });
+        //   categories[category]++;
+        // });
 
         // Get all NLP results (topics)
-        const topicResponses = await Promise.all(topicsPromises);
-        topicResponses.forEach(topic => {
-          if (!topics.hasOwnProperty(topic)) {
-            topics[topic] = 0;
-          }
+        // const topicResponses = await Promise.all(topicsPromises);
+        // topicResponses.forEach(topic => {
+        //   if (!topics.hasOwnProperty(topic)) {
+        //     topics[topic] = 0;
+        //   }
 
-          topics[topic]++;
-        });
+        //   topics[topic]++;
+        // });
 
         // stat.* are all Date objects, in which only hour and minute are meaningful
         if (profile.counts) {
