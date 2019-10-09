@@ -22,12 +22,12 @@ const findType = (profile, config) => ({
     profile.latest == null
       ? false
       : new Date(profile.latest.end.dateTime).getHours() >=
-      config.userTypes.late,
+        config.userTypes.late,
   early:
     profile.earliest == null
       ? false
       : new Date(profile.earliest.start.dateTime).getHours() <
-      config.userTypes.early
+        config.userTypes.early
 });
 
 export const analyze = (profile, config) => ({
@@ -84,9 +84,9 @@ export const isLater = (prev, cur) => {
 export const isLonger = (prev, cur) => {
   return (
     new Date(cur.end.dateTime).getTime() -
-    new Date(cur.start.dateTime).getTime() >
+      new Date(cur.start.dateTime).getTime() >
     new Date(prev.end.dateTime).getTime() -
-    new Date(prev.start.dateTime).getTime()
+      new Date(prev.start.dateTime).getTime()
   );
 };
 
@@ -251,7 +251,7 @@ export const average = list =>
 
 export const formatTime = time =>
   `${time.getHours() > 9 ? "" : "0"}${time.getHours()}:${
-  time.getMinutes() > 9 ? "" : "0"
+    time.getMinutes() > 9 ? "" : "0"
   }${time.getMinutes()}`;
 
 const fit = (freeTime, eStart, eEnd) => {
@@ -317,6 +317,7 @@ export const fitOneEvent = (
     }
 
     const preference = preferences[event];
+    const { keyword } = preference;
 
     preference.timeRange.forEach(time => {
       if (suggestion != null) return;
@@ -336,9 +337,10 @@ export const fitOneEvent = (
               start,
               end
             },
+            keyword,
             title: `${
               category != null ? `[${capFirst(category)}] ` : ""
-              }${genTitle(event)}`
+            }${genTitle(event)}`
           };
 
           newFreeTime = updateFreeTime(freeTime, start, end);
@@ -395,57 +397,57 @@ export const mapPrefToSuggestionTitle = pref => {
 // For Preference Migration Helper
 type OldPreferenceType = {|
   scienceFiction: boolean,
-    expandingMind: boolean,
-      workout: boolean,
-        jogging: boolean,
-          basketball: boolean,
-            homework: boolean,
-              review: boolean,
-                emptyMind: boolean,
-                  movie: boolean,
-                    boardGames: boolean,
-                      videoGames: boolean,
-                        bar: boolean,
-                          spendTimeGF: boolean,
-                            mealWithFriend: boolean
-                              |};
+  expandingMind: boolean,
+  workout: boolean,
+  jogging: boolean,
+  basketball: boolean,
+  homework: boolean,
+  review: boolean,
+  emptyMind: boolean,
+  movie: boolean,
+  boardGames: boolean,
+  videoGames: boolean,
+  bar: boolean,
+  spendTimeGF: boolean,
+  mealWithFriend: boolean
+|};
 
 type NewPreferenceType = {|
   productivity: {
-  self: {
-    workOnSideProject: boolean
-  },
-  work: {
-    workOnHomework: boolean,
+    self: {
+      workOnSideProject: boolean
+    },
+    work: {
+      workOnHomework: boolean,
       reviewCourseMaterial: boolean
-  }
-},
+    }
+  },
 
-wellness: {
-  physical: {
-    workout: boolean,
+  wellness: {
+    physical: {
+      workout: boolean,
       playBasketball: boolean,
-        goJogging: boolean
-  },
-  mental: {
-    meditationToClearMind: boolean,
+      goJogging: boolean
+    },
+    mental: {
+      meditationToClearMind: boolean,
       readToExpandMind: boolean
-  }
-},
-
-leisure: {
-  personal: {
-    readAFictionBook: boolean,
-      playVideoGames: boolean,
-        spendTimeWithLovedOnes: boolean
+    }
   },
-  social: {
-    hangOutAtABar: boolean,
+
+  leisure: {
+    personal: {
+      readAFictionBook: boolean,
+      playVideoGames: boolean,
+      spendTimeWithLovedOnes: boolean
+    },
+    social: {
+      hangOutAtABar: boolean,
       haveAMealWithFriends: boolean,
-        playBoardGames: boolean,
-          goToAMovieWithFriends: boolean
+      playBoardGames: boolean,
+      goToAMovieWithFriends: boolean
+    }
   }
-}
 |};
 
 export const flattenPreference = (preferences: NewPreferenceType) => {

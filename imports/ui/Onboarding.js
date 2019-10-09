@@ -108,16 +108,16 @@ class Onboarding extends React.Component<Props> {
     let dropdowns = [null, null, null];
 
     if (!this.props.loading && this.props.config.eventPreferences) {
-      Object.keys(this.props.config.eventPreferences).map(((category, index) => {
+      Object.keys(this.props.config.eventPreferences).map((category, index) => {
         const subCategory = this.props.config.eventPreferences[category];
         if (subCategory) {
-          dropdowns[index] =
-            <div className="categoryDropdown" key={'categoryDropdown' + index}>
+          dropdowns[index] = (
+            <div className="categoryDropdown" key={"categoryDropdown" + index}>
               {Object.keys(subCategory).map((title, idx) => {
                 const subTitles = Object.keys(subCategory[title]);
 
                 return (
-                  <div className="subCategory" key={'subCategory' + idx}>
+                  <div className="subCategory" key={"subCategory" + idx}>
                     <b>{title}</b>
                     <hr className="subCategorySplit"></hr>
                     {subTitles.map(sub => (
@@ -135,8 +135,9 @@ class Onboarding extends React.Component<Props> {
                 );
               })}
             </div>
+          );
         }
-      }));
+      });
     }
 
     return (

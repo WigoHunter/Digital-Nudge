@@ -46,6 +46,11 @@
           "duration": 120,
           "timeRange": ["13:00-17:00", "20:00-23:00"],
           "keyword": "Courses"
+        },
+        "workOnResearchPaper": {
+          "duration": 60,
+          "timeRange": ["08:00-10:00"],
+          "keyword": "Research"
         }
       }
     },
