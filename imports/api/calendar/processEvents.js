@@ -5,11 +5,8 @@ import {
   reverse,
   fromLocalToUTC,
   callWithPromise,
-  mapPrefToSuggestionTitle,
   fitOneEvent
 } from "../utils";
-
-const _ = require("lodash");
 
 const loadBuzytime = (user, min, max) =>
   new Promise((resolve, reject) => {
@@ -40,11 +37,11 @@ const processEvents = async (
   config = Config.findOne(),
   send = true
 ) => {
-  if (events && events.items && config) {
-    if (config.eventPreferences == null) {
-      return;
-    }
+  if (!config && config.eventPreferences == null) {
+    return;
+  }
 
+  if (events && events.items) {
     // Initialize variables
     events = trimEvents(events.items);
     const span = calcEventsSpan(events);
@@ -63,6 +60,7 @@ const processEvents = async (
     let busy = null;
 
     // Process hours in the past day
+    // Kevin's Todo: Modify
     if (newUser) {
       let spanForPastWeek = await trackPastWeekEventSpan(user);
       await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
@@ -118,24 +116,6 @@ const processEvents = async (
       }, [])
       .sort((a, b) => a.time.start - b.time.start);
 
-    // Get largest free time
-    let time = freeTime.reduce((prev, next) => {
-      return new Date(prev.end).getTime() - new Date(prev.start).getTime() >
-        new Date(next.end).getTime() - new Date(next.start).getTime()
-        ? prev
-        : next;
-    });
-
-    let suggestion = {
-      title: config.defaults.title,
-      span,
-      time
-    };
-
-    suggestion.title = mapPrefToSuggestionTitle(
-      _.sample(candidates.productivity || [])
-    );
-
     if (send) {
       const target = await callWithPromise("getFullUser", user._id);
       sendEmail(suggestions, target);
@@ -148,9 +128,9 @@ const processEvents = async (
     console.log(
       `----- End of Suggestion built up for ${user.services.google.name} -----`
     );
-    Meteor.call("updateLastSuggestion", user._id, suggestions[0].time);
+
     Meteor.call("insertSuggestion", user._id, suggestions);
-    return suggestion;
+    return suggestions;
   }
 
   return null;
@@ -226,8 +206,6 @@ const trackPastWeekEventSpan = user =>
         }
 
         reject(0);
-        // Meteor.call("updateSpanForLastWeek", user._id, spanForPastWeek);
-        // Meteor.call("setUserToOld", user._id);
       }
     );
   });
