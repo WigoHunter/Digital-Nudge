@@ -1,5 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Config } from "../db/configs";
+import { Logs } from "../db/logger";
+import { logEvent } from "./logger";
 
 Meteor.methods({
   updateGoal(id, goal) {
@@ -14,6 +16,7 @@ Meteor.methods({
   },
 
   updateSendTime(id, sendTime) {
+    logEvent("update_send_time", id, { sendTime });
     Meteor.users.update(
       { _id: id },
       {
@@ -25,6 +28,7 @@ Meteor.methods({
   },
 
   updatePreferences(id, preferences) {
+    logEvent("update_preference", id, preferences);
     Meteor.users.update(
       { _id: id },
       {
@@ -115,5 +119,23 @@ Meteor.methods({
         }
       }
     );
+  },
+
+  logWithEventTypeAndPayload(type, id, payload) {
+    Logs.insert({
+      user: id,
+      time: new Date(),
+      type,
+      data: payload
+    });
+  },
+
+  logWithEventTypeAndFields(type, id, payload) {
+    Logs.insert({
+      user: id,
+      time: new Date(),
+      type,
+      ...payload
+    });
   }
 });

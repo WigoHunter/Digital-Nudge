@@ -2,6 +2,7 @@ import { Meteor } from "meteor/meteor";
 import keys from "../../keys";
 import sgMail from "@sendgrid/mail";
 import { fromUTCToLocal, callWithPromise } from "./utils";
+import { logEvent } from "./logger";
 
 sgMail.setApiKey(keys["sendGrid"]["key"]);
 
@@ -34,10 +35,17 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
           end.toISOString().split(".")[0]
         }Z`.replace(/[-:]/g, "");
 
+        const payload = JSON.stringify({
+          link: "CALENDAR LINK",
+          id: user._id,
+          suggestion
+        });
+
         return {
           time: time,
           hours: `${localStart.format("HH:mm")} - ${localEnd.format("HH:mm")}`,
-          title: suggestion.title
+          title: suggestion.title,
+          link: `http://localhost:3000/click/${payload}`
         };
       });
     }
@@ -65,6 +73,7 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
         }
       };
 
+      logEvent("send_email", user._id, msg);
       sgMail.send(msg);
     } catch (e) {
       console.log(e);

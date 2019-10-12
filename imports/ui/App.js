@@ -3,6 +3,8 @@ import Login from "./Login";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Dashboard from "./Dashboard";
+import Redirection from "./Redirection";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 // Styles
 import "../less/App.less";
@@ -20,9 +22,18 @@ class App extends Component {
     const { user } = this.props;
 
     return (
-      <div className="app">
-        {user._id ? <Dashboard user={user} /> : <Login />}
-      </div>
+      <Router>
+        <Switch>
+          <Route path="/click/:payload">
+            <Redirection />
+          </Route>
+          <Route path="/">
+            <div className="app">
+              {user._id ? <Dashboard user={user} /> : <Login />}
+            </div>
+          </Route>
+        </Switch>
+      </Router>
     );
   }
 }

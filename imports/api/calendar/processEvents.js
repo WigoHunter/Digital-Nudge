@@ -7,6 +7,7 @@ import {
   callWithPromise,
   fitOneEvent
 } from "../utils";
+import { logEvent } from "../logger";
 
 const loadBuzytime = (user, min, max) =>
   new Promise((resolve, reject) => {
@@ -72,10 +73,13 @@ const processEvents = async (
       await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
     }
 
+    logEvent("past_day_calendar_usage", user._id, { span });
+
     // Load busy time async
     try {
       busy = await loadBuzytime(user, min, max);
     } catch (e) {
+      busy = [];
       console.log(`Error occurred: ${e}`);
     }
 
@@ -116,6 +120,8 @@ const processEvents = async (
           : result;
       }, [])
       .sort((a, b) => a.time.start - b.time.start);
+
+    logEvent("gen_suggestion", user._id, { suggestions });
 
     if (send) {
       const target = await callWithPromise("getFullUser", user._id);

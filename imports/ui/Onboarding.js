@@ -9,6 +9,13 @@ type Props = {
   userId: string,
   preferences?: {
     [string]: boolean
+  },
+  loading: boolean,
+  config: {
+    eventPreferences: {
+      [string]: any
+    },
+    [string]: any
   }
 };
 
@@ -106,10 +113,12 @@ class Onboarding extends React.Component<Props> {
 
   render() {
     let dropdowns = [null, null, null];
+    const { loading, config } = this.props;
 
-    if (!this.props.loading && this.props.config.eventPreferences) {
-      Object.keys(this.props.config.eventPreferences).map((category, index) => {
-        const subCategory = this.props.config.eventPreferences[category];
+    if (!loading && config.eventPreferences) {
+      Object.keys(config.eventPreferences).map((category, index) => {
+        const subCategory = config.eventPreferences[category];
+
         if (subCategory) {
           dropdowns[index] = (
             <div className="categoryDropdown" key={"categoryDropdown" + index}>
