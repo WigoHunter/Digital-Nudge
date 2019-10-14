@@ -60,7 +60,7 @@ class ConfigModal extends React.Component {
     super();
 
     this.state = {
-      open: true,
+      open: false,
       config: null
     };
   }
