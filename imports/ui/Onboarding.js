@@ -187,7 +187,7 @@ function Onboarding(props: Props) {
         </div>
       </div>
       <div className="onboardingBtn" onClick={() => handleSubmit()}>
-        {Object.keys(props.preferences || {}).length > 0 ? "Close" : "Confirm"}
+        Confirm
       </div>
     </div>
   );

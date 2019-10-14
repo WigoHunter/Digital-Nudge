@@ -137,5 +137,23 @@ Meteor.methods({
       type,
       ...payload
     });
+  },
+
+  getLogs(query = {}) {
+    const logs = Logs.find(query)
+      .fetch()
+      .map(log => {
+        const { _id, user, time, type, ...rest } = log;
+
+        return {
+          _id,
+          user,
+          time,
+          type,
+          data: JSON.stringify(rest)
+        };
+      });
+
+    return logs;
   }
 });

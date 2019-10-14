@@ -4,6 +4,12 @@ import Modal from "react-modal";
 import { useDropzone } from "react-dropzone";
 import PropTypes from "prop-types";
 import JSONTree from "react-json-tree";
+import { ExportToCsv } from "export-to-csv";
+import { callWithPromise } from "../api/utils";
+import { Logs } from "../db/logger";
+import { withTracker } from "meteor/react-meteor-data";
+
+const _ = require("lodash");
 
 export const AUTHORIZED = [
   "mattandkevin1060@gmail.com",
@@ -45,14 +51,16 @@ Dropzone.propTypes = {
 
 class ConfigModal extends React.Component {
   static propTypes = {
-    email: PropTypes.string
+    email: PropTypes.string,
+    loading: PropTypes.bool,
+    logs: PropTypes.array
   };
 
   constructor() {
     super();
 
     this.state = {
-      open: false,
+      open: true,
       config: null
     };
   }
@@ -87,16 +95,62 @@ class ConfigModal extends React.Component {
     });
   };
 
+  download = async () => {
+    const logs = await callWithPromise("getLogs");
+
+    const options = {
+      filename: "nudges.ml - event logs",
+      fieldSeparator: ",",
+      // eslint-disable-next-line quotes
+      quoteStrings: '"',
+      decimalSeparator: ".",
+      showLabels: true,
+      showTitle: false,
+      title: `logs @${new Date().toDateString()}`,
+      useTextFile: false,
+      useBom: true,
+      useKeysAsHeaders: true
+    };
+
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(logs);
+  };
+
   render() {
+    const { logs, loading } = this.props;
+    const logCounts = loading
+      ? {}
+      : logs.reduce(
+          (result, log) => ({
+            ...result,
+            [log.type]: _.get(result, log.type, 0) + 1
+          }),
+          {}
+        );
+
     return (
       <>
         <div className="config-button" onClick={this.open}>
-          set config
+          Admin
         </div>
         <Modal isOpen={this.state.open} ariaHideApp={false} className="modal">
           <p className="x" onClick={this.close}>
             x
           </p>
+          <h5>Usage Logging</h5>
+          <div className="logs">
+            {Object.keys(logCounts).map(type => (
+              <div className="log" key={type}>
+                <h6>{logCounts[type]}</h6>
+                <p>{type}</p>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => this.download()} className="download">
+            Download Logs
+          </button>
+
+          <h5>Platform Config</h5>
           <Dropzone getConfig={this.getConfig} email={this.props.email} />
           {this.state.config && (
             <>
@@ -112,4 +166,13 @@ class ConfigModal extends React.Component {
   }
 }
 
-export default ConfigModal;
+export default withTracker(() => {
+  const sub = Meteor.subscribe("logs.type");
+  const loading = !sub.ready();
+  const logs = Logs.find().fetch();
+
+  return {
+    loading,
+    logs
+  };
+})(ConfigModal);

@@ -47,7 +47,7 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
           time,
           hours: `${localStart.format("HH:mm")} - ${localEnd.format("HH:mm")}`,
           title: suggestion.title,
-          link: `http://localhost:3000/click/${payload}`
+          link: `http://nudges.ml/click/${payload}`
         };
       });
     }

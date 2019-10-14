@@ -1,8 +1,9 @@
 import { Meteor } from "meteor/meteor";
 import { Config } from "../db/configs";
+import { Logs } from "../db/logger";
 
 if (Meteor.isServer) {
-  Meteor.publish("userData", function () {
+  Meteor.publish("userData", function() {
     return Meteor.users.find(
       { _id: this.userId },
       {
@@ -16,7 +17,7 @@ if (Meteor.isServer) {
     );
   });
 
-  Meteor.publish("history", function () {
+  Meteor.publish("history", function() {
     return Meteor.users.find(
       { _id: this.userId },
       {
@@ -27,7 +28,7 @@ if (Meteor.isServer) {
     );
   });
 
-  Meteor.publish("config.eventPreferences", function () {
+  Meteor.publish("config.eventPreferences", function() {
     return Config.find(
       {},
       {
@@ -38,7 +39,7 @@ if (Meteor.isServer) {
     );
   });
 
-  Meteor.publish("config.adjustableSendTime", function () {
+  Meteor.publish("config.adjustableSendTime", function() {
     return Config.find(
       {},
       {
@@ -49,7 +50,18 @@ if (Meteor.isServer) {
     );
   });
 
-  Meteor.publish("config.usertype", function () {
+  Meteor.publish("logs.type", function() {
+    return Logs.find(
+      {},
+      {
+        fields: {
+          type: 1
+        }
+      }
+    );
+  });
+
+  Meteor.publish("config.usertype", function() {
     return Config.find(
       {},
       {
