@@ -100,8 +100,6 @@ function Onboarding(props: Props) {
   let dropdowns = [null, null, null];
 
   if (!loading && config.eventPreferences) {
-    console.log(state);
-
     Object.keys(config.eventPreferences).map((category, index) => {
       const subCategory = config.eventPreferences[category];
 
@@ -117,7 +115,6 @@ function Onboarding(props: Props) {
                   <hr className="subCategorySplit"></hr>
                   {subTitles.map(sub => {
                     const path = `${category}.${title}.${sub}`;
-                    console.log(path);
 
                     return (
                       <label key={sub}>
