@@ -14,6 +14,7 @@ import seedConfig from "../nudge-config";
 // import { sendEmail } from "../imports/api/email";
 // import { t_suggestion } from "../imports/api/tests";
 // import { draw } from "../imports/api/utils";
+// import { getRelevantEventsFromEventbrite } from "../imports/api/eventbrite";
 
 // LUIS processing
 // import { getAllCalendarData } from "../imports/api/luis/data.js";
@@ -62,4 +63,16 @@ Meteor.startup(() => {
 
   // Test LUIS
   // getCategory("Lunch with Jack").then(res => console.log(res));
+
+  // Test Meetup/Eventbrite
+  // Meteor.users
+  //   .find()
+  //   .fetch()
+  //   .forEach(async user => {
+  //     const events = await getRelevantEventsFromEventbrite(
+  //       user.nudgeProfile.preferences
+  //     );
+
+  //     console.log(events);
+  //   });
 });
