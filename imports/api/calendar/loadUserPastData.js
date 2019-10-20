@@ -11,6 +11,32 @@ import {
   callWithPromise
 } from "../utils";
 
+const checkUpperBoundOrLowerbound = (time, config) => {
+  const sendTime = new Date(time);
+  const hour = sendTime.getHours();
+
+  const upperBound = config.bounds.upper - "0";
+  const lowerBound = config.bounds.lower - "0";
+
+  // Lower bound
+  if (hour < lowerBound) {
+    console.log(
+      `Lower bound reached! ${hour} is earlier than ${lowerBound}:00`
+    );
+    sendTime.setHours(lowerBound);
+    sendTime.setMinutes(0);
+  }
+
+  // Upper bound
+  else if (hour >= upperBound) {
+    console.log(`Upper bound reached! ${hour} is later than ${upperBound}:00`);
+    sendTime.setHours(upperBound);
+    sendTime.setMinutes(0);
+  }
+
+  return sendTime;
+};
+
 // Browser environment - local time applies to the Date Time.
 const loadUserPastData = (id = Meteor.user()._id) =>
   new Promise(async (resolve, reject) => {
@@ -155,6 +181,10 @@ const loadUserPastData = (id = Meteor.user()._id) =>
           }).length;
           profile.stat.numberOfEventsAfter5pm =
             profile.counts - profile.stat.numberOfEventsBefore5pm;
+        }
+
+        if (config.bounds != null) {
+          sendTime = checkUpperBoundOrLowerbound(sendTime, config);
         }
 
         profile = {
