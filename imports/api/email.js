@@ -16,9 +16,36 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
 
     let withSuggestion = false;
     let data = [];
-    if (suggestions.length !== 0) {
+    const ourSuggestions = suggestions.filter(suggestion =>
+      suggestion.hasOwnProperty("keyword")
+    );
+    const externalSuggestions = suggestions
+      .filter(suggestion => suggestion.hasOwnProperty("url"))
+      .map(suggestion => {
+        const start = new Date(suggestion.time.start);
+        const end = new Date(suggestion.time.end);
+        const time = `${start.toISOString().split(".")[0]}Z/${
+          end.toISOString().split(".")[0]
+        }Z`.replace(/[-:]/g, "");
+
+        const payload = JSON.stringify({
+          link: encodeURIComponent(
+            `https://www.google.com/calendar/render?action=TEMPLATE&text=${suggestion.title}&dates=${time}&details=add+details&location=add+locasionf=true&output=xml`
+          ),
+          id: user._id,
+          suggestion
+        });
+
+        return {
+          time,
+          title: suggestion.title,
+          link: `http://nudges.ml/click/${payload}`
+        };
+      });
+
+    if (ourSuggestions.length !== 0) {
       withSuggestion = true;
-      data = suggestions.map(suggestion => {
+      data = ourSuggestions.map(suggestion => {
         const start = new Date(suggestion.time.start);
         const end = new Date(suggestion.time.end);
         // const timezone = user.nudgeProfile.timezone || "";
@@ -53,7 +80,7 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
     }
 
     try {
-      const keywords = suggestions.map(sug => sug.keyword);
+      const keywords = ourSuggestions.map(sug => sug.keyword);
       const emailTitle =
         keywords.length > 0
           ? `[Digital Nudge] Boost Your Day with ${keywords.join(", ")}`
@@ -71,7 +98,8 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
             : "Awesome job! Good luck working hard today!",
           "with-suggestion": withSuggestion,
           suggestion_text: config.suggestionText,
-          suggestions: data
+          suggestions: data,
+          externalSuggestions
         }
       };
 

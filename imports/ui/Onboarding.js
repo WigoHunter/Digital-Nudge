@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Meteor } from "meteor/meteor";
-import { genTitle } from "../api/utils";
+import { genTitle, hasSelectedPreferredItem } from "../api/utils";
 import { Config } from "../db/configs";
 import { withTracker } from "meteor/react-meteor-data";
 
@@ -78,7 +78,11 @@ function Onboarding(props: Props) {
     }
   }, [loading]);
 
-  const handleSubmit = () => {
+  const handleSubmit = hasSelected => {
+    if (!hasSelected) {
+      return;
+    }
+
     Meteor.call("updatePreferences", props.userId, state, () => {
       setTimeout(() => {
         props.setPreferences(false);
@@ -137,6 +141,8 @@ function Onboarding(props: Props) {
     });
   }
 
+  const hasSelected = hasSelectedPreferredItem(state);
+
   return (
     <div className="categoryContainer content">
       <h3>Welcome to Digital Nudge</h3>
@@ -186,7 +192,10 @@ function Onboarding(props: Props) {
           {opens[2] ? dropdowns[2] : null}
         </div>
       </div>
-      <div className="onboardingBtn" onClick={() => handleSubmit()}>
+      <div
+        className={`onboardingBtn ${!hasSelected && "disabled"}`}
+        onClick={() => handleSubmit(hasSelected)}
+      >
         Confirm
       </div>
     </div>

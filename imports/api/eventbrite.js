@@ -1,4 +1,5 @@
 import keys from "../../keys";
+
 const _ = require("lodash");
 const eventbrite = require("eventbrite");
 
@@ -24,11 +25,11 @@ const mapUserPreferenceToEventbriteCategories = preferences => {
     getUserPreferences(preferences).reduce((result, name) => {
       const categories =
         name === "productivity"
-          ? [101, 102, 120]
+          ? [101, 102]
           : name === "wellness"
-          ? [103, 107, 114, 117]
+          ? [107]
           : name === "leisure"
-          ? [103, 110, 104, 105]
+          ? [110, 104]
           : [];
       return [...result, ...categories];
     }, [])
@@ -46,6 +47,10 @@ export const getRelevantEventsFromEventbrite = async (preferences = {}) => {
 
   const categories = mapUserPreferenceToEventbriteCategories(preferences);
 
+  if (categories.length == 0) {
+    return [];
+  }
+
   return new Promise((resolve, reject) => {
     sdk
       .request(
@@ -58,11 +63,10 @@ export const getRelevantEventsFromEventbrite = async (preferences = {}) => {
           const { name, summary, url, start, end, logo } = e;
 
           return {
-            name: name.text,
+            title: name.text,
             summary,
             url,
-            start: start.utc,
-            end: end.utc,
+            time: { start: start.utc, end: end.utc },
             img: logo.url
           };
         });

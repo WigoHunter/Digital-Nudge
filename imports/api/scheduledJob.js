@@ -102,7 +102,7 @@ export const scheduleJobs = async () => {
               return;
             }
 
-            processEvents(res, user, config);
+            processEvents(res, user, config, true);
           }
         );
       }

@@ -450,6 +450,11 @@ type NewPreferenceType = {|
   }
 |};
 
+export const hasSelectedPreferredItem = (preference: NewPreferenceType) => {
+  const preferences = flattenPreference(preference);
+  return Object.values(preferences).some(p => p === true);
+};
+
 export const flattenPreference = (preferences: NewPreferenceType) => {
   if (preferences == null || Object.keys(preferences || {}).length == 0) {
     return {};

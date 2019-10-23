@@ -5,9 +5,11 @@ import {
   reverse,
   fromLocalToUTC,
   callWithPromise,
-  fitOneEvent
+  fitOneEvent,
+  fit
 } from "../utils";
 import { logEvent } from "../logger";
+import { getRelevantEventsFromEventbrite } from "../eventbrite";
 
 const loadBuzytime = (user, min, max) =>
   new Promise((resolve, reject) => {
@@ -31,12 +33,15 @@ const loadBuzytime = (user, min, max) =>
     );
   });
 
+type Mode = "only_ours" | "only_external" | "both" | "none";
+
 // Server environment - UTC time
 const processEvents = async (
   events,
   user = Meteor.user(),
   config = Config.findOne(),
-  send = true
+  send = true,
+  mode: Mode = "only_ours"
 ) => {
   if (!config && config.eventPreferences == null) {
     return;
@@ -99,29 +104,49 @@ const processEvents = async (
       };
     }, {});
 
-    const suggestions = Object.keys(candidates)
-      .reduce((result, category) => {
-        const es = candidates[category];
+    const ourSuggestions = ["only_ours", "both"].includes(mode)
+      ? Object.keys(candidates).reduce((result, category) => {
+          const es = candidates[category];
 
-        if (!Array.isArray(es) && es.length < 1) {
-          return result;
-        }
+          if (!Array.isArray(es) && es.length < 1) {
+            return result;
+          }
 
-        const optimization = fitOneEvent(
-          freeTime,
-          eventPreferences[category] || {},
-          es,
-          category
-        );
+          const optimization = fitOneEvent(
+            freeTime,
+            eventPreferences[category] || {},
+            es,
+            category
+          );
 
-        freeTime = optimization.freeTime;
-        return optimization.suggestion != null
-          ? [...result, optimization.suggestion]
-          : result;
-      }, [])
-      .sort((a, b) => a.time.start - b.time.start);
+          freeTime = optimization.freeTime;
+          return optimization.suggestion != null
+            ? [...result, optimization.suggestion]
+            : result;
+        }, [])
+      : [];
 
-    logEvent("gen_suggestion", user._id, { suggestions });
+    const externalSuggestions = ["only_external", "both"].includes(mode)
+      ? getRelevantEventsFromEventbrite(preferences)
+          .reduce((result, event) => {
+            const {
+              time: { start, end }
+            } = event;
+
+            return fit(freeTime, moment(start), moment(end))
+              ? [...result, event]
+              : result;
+          }, [])
+          .slice(0, 3)
+      : [];
+
+    const suggestions = [...ourSuggestions, ...externalSuggestions].sort(
+      (a, b) => a.time.start - b.time.start
+    );
+
+    suggestions.forEach(suggestion => {
+      logEvent("gen_suggestion", user._id, { suggestion });
+    });
 
     if (send) {
       const target = await callWithPromise("getFullUser", user._id);
