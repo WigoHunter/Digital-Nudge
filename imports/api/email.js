@@ -29,9 +29,7 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
         }Z`.replace(/[-:]/g, "");
 
         const payload = JSON.stringify({
-          link: encodeURIComponent(
-            `https://www.google.com/calendar/render?action=TEMPLATE&text=${suggestion.title}&dates=${time}&details=add+details&location=add+locasionf=true&output=xml`
-          ),
+          link: encodeURIComponent(suggestion.url),
           id: user._id,
           suggestion
         });
