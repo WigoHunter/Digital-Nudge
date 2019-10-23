@@ -74,7 +74,10 @@ export const getRelevantEventsFromEventbrite = async (preferences = {}) => {
         resolve(events);
       })
       .catch(e => {
-        reject(e);
+        console.log(e);
+        resolve([]);
       });
+
+    reject([]);
   });
 };
