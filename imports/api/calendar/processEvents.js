@@ -66,16 +66,10 @@ const processEvents = async (
     let busy = null;
 
     // Process hours in the past day
-    // Kevin's Todo: Modify
     if (newUser) {
       let spanForPastWeek = await trackPastWeekEventSpan(user);
       await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
       await callWithPromise("setUserToOld", user._id);
-    } else {
-      let spanForPastWeek = user.spanForPastWeek || new Array(7).fill(0);
-      spanForPastWeek.shift();
-      spanForPastWeek.push(span);
-      await callWithPromise("updateSpanForLastWeek", user._id, spanForPastWeek);
     }
 
     logEvent("past_day_calendar_usage", user._id, { span });
