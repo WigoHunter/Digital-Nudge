@@ -1,6 +1,8 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
+import { withTracker } from "meteor/react-meteor-data";
+import { Config } from "../db/configs";
 
 // Redux
 import { bindActionCreators } from "redux";
@@ -11,7 +13,9 @@ import { loadUserPastData } from "../api/calendar";
 
 class Login extends React.Component {
   static propTypes = {
-    authActions: PropTypes.object
+    authActions: PropTypes.object,
+    config: PropTypes.object,
+    loading: PropTypes.bool
   };
 
   login = () => {
@@ -52,9 +56,18 @@ class Login extends React.Component {
   };
 
   render() {
-    return (
+    const { loading, config } = this.props;
+
+    return loading === false ? (
       <>
-        <div className="login">
+        <div
+          className="login"
+          style={{
+            background: `url(${config.background ||
+              "http://smalldata.io/img/homepage.jpg"})`,
+            backgroundSize: "cover"
+          }}
+        >
           <div className="overlay">
             <h3 className="title">
               Welcome to <span>Digital Nudge</span> as a Service!
@@ -145,7 +158,7 @@ class Login extends React.Component {
           <p>Made for Specialization Project at Cornell Tech</p>
         </div>
       </>
-    );
+    ) : null;
   }
 }
 
@@ -155,7 +168,18 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
+const LoginComponent = withTracker(() => {
+  const sub = Meteor.subscribe("config.background");
+  const loading = !sub.ready();
+  const config = Config.findOne();
+
+  return {
+    loading,
+    config
+  };
+})(Login);
+
 export default connect(
   null,
   mapDispatchToProps
-)(Login);
+)(LoginComponent);

@@ -39,6 +39,17 @@ if (Meteor.isServer) {
     );
   });
 
+  Meteor.publish("config.background", function() {
+    return Config.find(
+      {},
+      {
+        fields: {
+          background: 1
+        }
+      }
+    );
+  });
+
   Meteor.publish("config.adjustableSendTime", function() {
     return Config.find(
       {},

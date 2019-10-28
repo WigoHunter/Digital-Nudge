@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import Report from "./Report";
 import ConfigModal, { AUTHORIZED } from "./ConfigModal";
 import Onboarding from "./Onboarding";
+import { withTracker } from "meteor/react-meteor-data";
+import { Config } from "../db/configs";
 
 // Redux
 import { connect } from "react-redux";
@@ -11,7 +13,9 @@ import { connect } from "react-redux";
 class Dashboard extends React.Component {
   static propTypes = {
     user: PropTypes.object,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
+    configLoading: PropTypes.bool,
+    config: PropTypes.object
   };
 
   state = {
@@ -25,7 +29,7 @@ class Dashboard extends React.Component {
   };
 
   render() {
-    const { user, loading } = this.props;
+    const { user, loading, configLoading, config } = this.props;
     const { setPreferences } = this.state;
 
     const profile = user.nudgeProfile;
@@ -35,7 +39,17 @@ class Dashboard extends React.Component {
     }
 
     return (
-      <div className="dashboard">
+      <div
+        className="dashboard"
+        style={{
+          background: `url(${
+            configLoading
+              ? "http://smalldata.io/img/homepage.jpg"
+              : config.background || "http://smalldata.io/img/homepage.jpg"
+          })`,
+          backgroundSize: "cover"
+        }}
+      >
         <div className="overlay">
           {!setPreferences && profile && profile.preferences ? (
             <div className="content">
@@ -83,4 +97,15 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(Dashboard);
+const DashboardComponent = withTracker(() => {
+  const sub = Meteor.subscribe("config.background");
+  const loading = !sub.ready();
+  const config = Config.findOne();
+
+  return {
+    configLoading: loading,
+    config
+  };
+})(Dashboard);
+
+export default connect(mapStateToProps)(DashboardComponent);
