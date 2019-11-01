@@ -119,7 +119,7 @@ export const sendOnboardingEmail = (user = Meteor.user()) => {
   const msg = {
     to: user.services.google.email,
     from: "kevin@nudges.ml",
-    subject: "Hello! Thank you for joining to Digital Nudges",
+    subject: "Hello! Thank you for joining Digital Nudges",
     templateId: "d-5934901c3a1d48048bdd247ef0166839",
     dynamic_template_data: {
       subject: "Hello! Thank you for joining to Digital Nudges",
