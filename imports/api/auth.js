@@ -17,5 +17,7 @@ Accounts.onCreateUser((_, user) => {
   // can use user.nudge as an object to control nudging behavior (i.e. nudge on what days? At what time?)
   user.newUser = true;
   user.lastSuggestion = null;
+  user.onboarded = false;
+
   return user;
 });

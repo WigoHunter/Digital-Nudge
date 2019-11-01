@@ -108,3 +108,36 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
     }
   }
 };
+
+export const sendOnboardingEmail = (user = Meteor.user()) => {
+  console.log(`generating onboarding email to ${user.services.google.email}`);
+  const content = `
+    <p>We'll start sending you daily emails that are <b>costumized</b> and <b>personalized</b> to help you better utilize your Google Calendar for <b>productivity</b>, <b>wellness</b> and <b>leisure</b> events. Please also remember to whitelist our emails so they don't end up in the spams!</p>
+    <p>We look forward to seeing a more productive version of you!</p>
+   `;
+
+  const msg = {
+    to: user.services.google.email,
+    from: "kevin@nudges.ml",
+    subject: "Hello! Thank you for joining to Digital Nudges",
+    templateId: "d-5934901c3a1d48048bdd247ef0166839",
+    dynamic_template_data: {
+      subject: "Hello! Thank you for joining to Digital Nudges",
+      gctext:
+        "Thank you for completing the onboarding process of Digital Nudges",
+      "with-suggestion": false,
+      suggestion_text: "",
+      suggestions: [],
+      externalSuggestions: [],
+      onboarding: true,
+      onboardingHTML: content
+    }
+  };
+
+  try {
+    logEvent("send_email", user._id, msg);
+    sgMail.send(msg);
+  } catch (e) {
+    console.log(e);
+  }
+};

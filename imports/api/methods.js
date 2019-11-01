@@ -2,6 +2,7 @@ import { Meteor } from "meteor/meteor";
 import { Config } from "../db/configs";
 import { Logs } from "../db/logger";
 import { logEvent } from "./logger";
+import { sendOnboardingEmail } from "./email";
 
 Meteor.methods({
   updateGoal(id, goal) {
@@ -29,14 +30,32 @@ Meteor.methods({
 
   updatePreferences(id, preferences) {
     logEvent("update_preference", id, preferences);
-    Meteor.users.update(
-      { _id: id },
-      {
-        $set: {
-          "nudgeProfile.preferences": preferences
+
+    const user = Meteor.users.findOne({ _id: id });
+
+    if (!user.onboarded) {
+      Meteor.users.update(
+        { _id: id },
+        {
+          $set: {
+            "nudgeProfile.preferences": preferences,
+            onboarded: true
+          }
+        },
+        () => {
+          sendOnboardingEmail(user);
         }
-      }
-    );
+      );
+    } else {
+      Meteor.users.update(
+        { _id: id },
+        {
+          $set: {
+            "nudgeProfile.preferences": preferences
+          }
+        }
+      );
+    }
   },
 
   getConfig() {

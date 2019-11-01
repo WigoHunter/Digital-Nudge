@@ -1,6 +1,6 @@
 {
   "key": "Newton438",
-  "background": "https://66.media.tumblr.com/7a193199346a97447d9360530fa8203d/tumblr_p6ca9kbgnk1vdsukeo2_1280.png",
+  "background": "https://smalldata.io/img/homepage.jpg",
   "incoming": ["primary"],
   "outgoing": ["email"],
   "ignore": [],

@@ -45,7 +45,8 @@ class Dashboard extends React.Component {
           background: `url(${
             configLoading
               ? "http://smalldata.io/img/homepage.jpg"
-              : config.background || "http://smalldata.io/img/homepage.jpg"
+              : `${config.background} cover` ||
+                "http://smalldata.io/img/homepage.jpg"
           })`,
           backgroundSize: "cover"
         }}
