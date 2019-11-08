@@ -148,11 +148,12 @@ const Report = ({ profile, loading, config, setPreferences }) => {
         <div className="action report-box">
           <h4>Tell Us Your Goal</h4>
           <p className="sub">
-            In the daily email, we look for your free time on the day, predict
-            and suggest the best time you work on this goal in the day!
+            You should have told us what you want us to schedule during your
+            free time in the onboarding process. But we understand the
+            preferences may be changed over time.
           </p>
           <button onClick={() => setPreferences(true)} className="outline">
-            Set Goals
+            Set goals
           </button>
           {/* <form onSubmit={_updateGoal} disabled={profile.goal === goal}>
             <input

@@ -153,41 +153,50 @@ function Onboarding(props: Props) {
       <div className="categoryRow">
         <div>
           <div className="categoryCard" id="productivityCard">
-            <a
-              href="#"
-              id="productivityClick"
-              className="categoryClick"
-              onClick={() => handleClick(0)}
-            >
-              Productivity
-            </a>
+            <div className="card-overlay">
+              <a
+                href="#"
+                id="productivityClick"
+                className="categoryClick"
+                onClick={() => handleClick(0)}
+              >
+                Productivity
+                <span>Perform with output</span>
+              </a>
+            </div>
           </div>
           {opens[0] ? dropdowns[0] : null}
         </div>
         <div>
           <div className="categoryCard" id="wellnessCard">
-            <a
-              href="#"
-              id="wellnessClick"
-              className="categoryClick"
-              onClick={() => handleClick(1)}
-            >
-              Wellness
-            </a>
+            <div className="card-overlay">
+              <a
+                href="#"
+                id="wellnessClick"
+                className="categoryClick"
+                onClick={() => handleClick(1)}
+              >
+                Wellness
+                <span>Live a healthier life</span>
+              </a>
+            </div>
           </div>
           {opens[1] ? dropdowns[1] : null}
         </div>
 
         <div>
           <div className="categoryCard" id="leisureCard">
-            <a
-              href="#"
-              id="leisureClick"
-              className="categoryClick"
-              onClick={() => handleClick(2)}
-            >
-              Leisure
-            </a>
+            <div className="card-overlay">
+              <a
+                href="#"
+                id="leisureClick"
+                className="categoryClick"
+                onClick={() => handleClick(2)}
+              >
+                Leisure
+                <span>Take some rest</span>
+              </a>
+            </div>
           </div>
           {opens[2] ? dropdowns[2] : null}
         </div>

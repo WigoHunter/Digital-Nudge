@@ -112,7 +112,7 @@ export const sendEmail = async (suggestions, user = Meteor.user()) => {
 export const sendOnboardingEmail = (user = Meteor.user()) => {
   console.log(`generating onboarding email to ${user.services.google.email}`);
   const content = `
-    <p>We'll start sending you daily emails that are <b>costumized</b> and <b>personalized</b> to help you better utilize your Google Calendar for <b>productivity</b>, <b>wellness</b> and <b>leisure</b> events. Please also remember to whitelist our emails so they don't end up in the spams!</p>
+    <p>We'll start sending you daily emails that are <b>customized</b> and <b>personalized</b> to help you better utilize your Google Calendar for <b>productivity</b>, <b>wellness</b> and <b>leisure</b> events. Please also remember to whitelist our emails so they don't end up in the spams!</p>
     <p>We look forward to seeing a more productive version of you!</p>
    `;
 
