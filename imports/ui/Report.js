@@ -4,13 +4,16 @@ import { Meteor } from "meteor/meteor";
 import { mostActive, formatTime } from "../api/utils";
 import { withTracker } from "meteor/react-meteor-data";
 import { Config } from "../db/configs";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import modalActions from "./actions/modal";
 
 const formatMinutes = minutes =>
   `${minutes / 60 > 0 ? `${Math.floor(minutes / 60)} hour(s) ` : ""}${
     minutes % 60 > 0 ? `${minutes % 60} minute(s)` : ""
   }`;
 
-const Report = ({ profile, loading, config, setPreferences }) => {
+const Report = ({ profile, loading, config, setPreferences, modalActions }) => {
   if (loading) {
     return null;
   }
@@ -54,7 +57,11 @@ const Report = ({ profile, loading, config, setPreferences }) => {
 
     profileSendTime.setHours(hour);
     profileSendTime.setMinutes(minute);
-    Meteor.call("updateSendTime", user._id, profileSendTime);
+    Meteor.call("updateSendTime", user._id, profileSendTime, () => {
+      modalActions.openModal(
+        `Thank you for letting us know! Daily emails will be sent at ${sendTime} starting from tomorrow! :)`
+      );
+    });
   };
 
   return (
@@ -212,6 +219,12 @@ const Report = ({ profile, loading, config, setPreferences }) => {
   );
 };
 
+const mapDispatchToProps = dispatch => {
+  return {
+    modalActions: bindActionCreators(modalActions, dispatch)
+  };
+};
+
 export default withTracker(() => {
   const sub = Meteor.subscribe("config.adjustableSendTime");
   const subHistory = Meteor.subscribe("history");
@@ -222,4 +235,9 @@ export default withTracker(() => {
     loading,
     config
   };
-})(Report);
+})(
+  connect(
+    null,
+    mapDispatchToProps
+  )(Report)
+);

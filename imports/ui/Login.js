@@ -64,8 +64,7 @@ class Login extends React.Component {
           className="login"
           style={{
             background: `url(${config.background ||
-              "http://smalldata.io/img/homepage.jpg"})`,
-            backgroundSize: "cover"
+              "http://smalldata.io/img/homepage.jpg"})`
           }}
         >
           <div className="overlay">

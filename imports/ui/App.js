@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 // Styles
 import "../less/App.less";
+import FeedbackModal from "./FeedbackModal";
 
 class App extends Component {
   static propTypes = {
@@ -23,6 +24,7 @@ class App extends Component {
 
     return (
       <Router>
+        <FeedbackModal />
         <Switch>
           <Route path="/click/:payload">
             <Redirection />

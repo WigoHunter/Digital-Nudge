@@ -32,8 +32,9 @@ Meteor.methods({
     logEvent("update_preference", id, preferences);
 
     const user = Meteor.users.findOne({ _id: id });
+    const isOnboardedBefore = user.onboarded || false;
 
-    if (!user.onboarded) {
+    if (!isOnboardedBefore) {
       Meteor.users.update(
         { _id: id },
         {
@@ -56,6 +57,8 @@ Meteor.methods({
         }
       );
     }
+
+    return isOnboardedBefore;
   },
 
   getConfig() {

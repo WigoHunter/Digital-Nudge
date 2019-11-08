@@ -17,6 +17,17 @@ if (Meteor.isServer) {
     );
   });
 
+  Meteor.publish("onboarded", function() {
+    return Meteor.users.find(
+      { _id: this.userId },
+      {
+        fields: {
+          onboarded: 1
+        }
+      }
+    );
+  });
+
   Meteor.publish("history", function() {
     return Meteor.users.find(
       { _id: this.userId },

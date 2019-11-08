@@ -3,16 +3,23 @@ import { Meteor } from "meteor/meteor";
 import { genTitle, hasSelectedPreferredItem } from "../api/utils";
 import { Config } from "../db/configs";
 import { withTracker } from "meteor/react-meteor-data";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import modalActions from "./actions/modal";
 
 const _ = require("lodash");
 
 type Props = {
   setPreferences: () => void,
+  modalActions: {
+    [string]: () => void
+  },
   userId: string,
   preferences?: {
     [string]: boolean
   },
   loading: boolean,
+  onboarded: boolean,
   config: {
     eventPreferences: {
       [string]: any
@@ -61,7 +68,7 @@ const genPreferenceState = (preferenceConfig, preferences) => {
 };
 
 function Onboarding(props: Props) {
-  const { preferences, loading, config } = props;
+  const { preferences, loading, config, modalActions, onboarded } = props;
   const [state, setPreferenceState] = useState({});
   const [opens, setOpens] = useState([false, false, false]);
 
@@ -85,7 +92,14 @@ function Onboarding(props: Props) {
 
     Meteor.call("updatePreferences", props.userId, state, () => {
       setTimeout(() => {
+        console.log(onboarded);
+
         props.setPreferences(false);
+        modalActions.openModal(
+          onboarded
+            ? "Thank you for updating the preference for us!"
+            : "Thank you for completing the onboarding process! Just now, we have sent you a welcoming email, which might be in spam (we would appreciate if you whitelist us!). Happy life hacking! :)"
+        );
       }, 300);
     });
   };
@@ -211,13 +225,27 @@ function Onboarding(props: Props) {
   );
 }
 
+const mapDispatchToProps = dispatch => {
+  return {
+    modalActions: bindActionCreators(modalActions, dispatch)
+  };
+};
+
 export default withTracker(() => {
   const sub = Meteor.subscribe("config.eventPreferences");
-  const loading = !sub.ready();
+  const subOnboarded = Meteor.subscribe("onboarded");
+  const loading = !sub.ready() || !subOnboarded.ready();
   const config = Config.findOne();
+  const user = Meteor.user();
 
   return {
     loading,
-    config
+    config,
+    onboarded: user.onboarded || false
   };
-})(Onboarding);
+})(
+  connect(
+    null,
+    mapDispatchToProps
+  )(Onboarding)
+);

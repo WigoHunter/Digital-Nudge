@@ -38,19 +38,16 @@ class Dashboard extends React.Component {
       return <p>loading...</p>;
     }
 
+    const style = {
+      background: `url(${
+        configLoading
+          ? "http://smalldata.io/img/homepage.jpg"
+          : `${config.background}` || "http://smalldata.io/img/homepage.jpg"
+      })`
+    };
+
     return (
-      <div
-        className="dashboard"
-        style={{
-          background: `url(${
-            configLoading
-              ? "http://smalldata.io/img/homepage.jpg"
-              : `${config.background} cover` ||
-                "http://smalldata.io/img/homepage.jpg"
-          })`,
-          backgroundSize: "cover"
-        }}
-      >
+      <div className="dashboard" style={style}>
         <div className="overlay">
           {!setPreferences && profile && profile.preferences ? (
             <div className="content">
