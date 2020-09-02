@@ -18,7 +18,7 @@
     "eventbrite": "^1.2.1",
     "export-to-csv": "^0.2.1",
     "fetch": "^1.1.0",
-    "googleapis": "^37.1.0",
+    "googleapis": "^39.1.0",
     "jsdom": "^14.0.0",
     "jstz": "^2.1.1",
     "lodash": "^4.17.15",
