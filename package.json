@@ -19,7 +19,7 @@
     "export-to-csv": "^0.2.1",
     "fetch": "^1.1.0",
     "googleapis": "^37.1.0",
-    "jsdom": "^14.0.0",
+    "jsdom": "^16.5.0",
     "jstz": "^2.1.1",
     "lodash": "^4.17.15",
     "meetup-api": "^1.4.38",
