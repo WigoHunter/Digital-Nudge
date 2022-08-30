@@ -25,7 +25,7 @@
     "meetup-api": "^1.4.38",
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.23",
+    "moment-timezone": "^0.5.35",
     "node-fetch-polyfill": "^2.0.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
